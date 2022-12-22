@@ -13,16 +13,14 @@ struct LightIndicatorView: View {
 		ZStack {
 			Image(systemName: "lightbulb.fill")
 				.resizable()
-				.scaledToFit()
+				.aspectRatio(contentMode: .fit)
 				.foregroundColor(
 					Color("Lights/Off"))
-				.aspectRatio(contentMode: .fit)
 			Image(systemName: "lightbulb.fill")
 				.resizable()
-				.scaledToFit()
+				.aspectRatio(contentMode: .fit)
 				.foregroundColor(
 					Color("Lights/On").opacity(on))
-				.aspectRatio(contentMode: .fit)
 		}
 	}
 }

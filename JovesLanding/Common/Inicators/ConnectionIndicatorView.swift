@@ -26,9 +26,9 @@ struct ConnectionIndicatorView: View {
 		ZStack {
 			Image(systemName: iconName())
 				.resizable()
+				.aspectRatio(contentMode: .fit)
 				.symbolRenderingMode(.palette)
 				.foregroundStyle(Self.color(connectionState: connectionState))
-				.aspectRatio(contentMode: .fit)
 		}
     }
 

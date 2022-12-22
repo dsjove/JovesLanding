@@ -11,14 +11,20 @@ struct BatteryIndicatorView: View {
     let progress: Double?
 
     var body: some View {
-		ZStack {
-			Image(systemName: iconName())
-				.resizable()
-				.scaledToFit()
-				.foregroundStyle(color(), .black)
-			//Text(progress != nil ? "\(Int(self.progress! * 100))%" : "")
-			.lineLimit(1)
-				.foregroundColor(Color("Battery/Text"))
+		GeometryReader { geom in
+			ZStack {
+				Color.clear
+				Image(systemName: iconName())
+					.resizable()
+					.aspectRatio(contentMode: .fit)
+					.foregroundStyle(color(), .black)
+				Text(progress != nil ? "\(Int(self.progress! * 100))%" : "")
+					.font(.system(size: geom.size.height * 0.5))
+					.lineLimit(1)
+					.allowsTightening(true)
+					.foregroundColor(Color("Battery/Text"))
+					.frame(alignment: .leading)
+			}
 		}
 	}
 
@@ -56,8 +62,9 @@ struct BatteryView_Previews: PreviewProvider {
 			BatteryIndicatorView(progress: 0.29)
 			BatteryIndicatorView(progress: 0.59)
 			BatteryIndicatorView(progress: 0.89)
-			BatteryIndicatorView(progress: 0.90)
 			BatteryIndicatorView(progress: 1.0)
+				.background(Color.gray)
+				.frame(width: 200, height: 100)
 			}
     }
 }

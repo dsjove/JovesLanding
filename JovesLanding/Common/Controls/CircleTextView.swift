@@ -1,5 +1,5 @@
 //
-//  CircleText.swift
+//  CircleTextView.swift
 //  JovesLanding
 //
 //  Created by David Giovannini on 12/12/22.
@@ -10,14 +10,17 @@ import SwiftUI
 
 struct CircleText_Preview: PreviewProvider {
 	static var previews: some View {
-		CircleText(text: "The quick brown fox jumps over the lazy dog.", angle: Angle(degrees: 60))
-			.font(.title2)
-			.frame(width: 200, height: 300)
-			.border(Color.green, width: 5)
+		CircleTextView(
+			text: "The quick brown fox jumps over the lazy dog.",
+			angle: .degrees(0),
+			alignment: 0.0)
+		.font(.title2)
+		.frame(width: 200, height: 300)
+		.border(Color.green, width: 5)
 	}
 }
 
-public struct CircleText: View {
+public struct CircleTextView: View {
 	var text: String
 	var angle: Angle = Angle()
 	var alignment: Double = 0.5
@@ -28,11 +31,12 @@ public struct CircleText: View {
 	public var body: some View {
 		GeometryReader { geometry in
 			let diameter = min(geometry.size.width, geometry.size.height)
-			let radius =  diameter / 2.0
-			let fullAngle = self.angle(at: self.textSizes.count, radius: radius)
+			let radius = diameter / 2.0
+			let fullAngle = self.angle(at: self.textSizes.count, radius: radius).0
 			ZStack {
 				Color.clear
 				ForEach(Array(text.enumerated()), id: \.self.offset) { (offset, element) in
+					let angle = self.angle(at: offset, radius: radius)
 					VStack {
 						Text(String(element))
 							.background(Sizeable())
@@ -43,26 +47,30 @@ public struct CircleText: View {
 						Spacer()
 					}
 					.frame(width: diameter, height: diameter)
-					.rotationEffect(self.angle(at: offset, radius: radius))
+					.rotationEffect(angle.0)
+					.opacity(angle.1 > .degrees(360) ? 0 : 1)
 				}
 			}
-			.rotationEffect(-fullAngle * self.alignment  + self.angle)
+			.rotationEffect(-fullAngle * self.alignment + self.angle)
 			.opacity(fullAngle <= tooFar ? 1.0 : tooFar.degrees / fullAngle.degrees)
 		}
 	}
 
-	private func angle(at index: Int, radius: Double) -> Angle {
-		guard textSizes.isEmpty == false else { return Angle(); }
-		var prefixLength = textSizes.filter{$0.key < index}.map{$0.value.width}.reduce(0,+)
+	private func angle(at index: Int, radius: Double) -> (Angle, Angle) {
+		guard textSizes.isEmpty == false else { return (Angle(), Angle()) }
+		var length = textSizes.filter{$0.key < index}.map{$0.value.width}.reduce(0,+)
+		var bounds = length
 		let height: Double
 		if let mySize = textSizes[index] {
-			prefixLength += mySize.width * 0.5
+			length += mySize.width * 0.5
+			bounds += mySize.width
 			height = mySize.height
 		}
 		else {
 			height = textSizes.first!.value.height
 		}
-		return .radians(prefixLength/(radius - height))
+		let realRadius = radius - height
+		return (.radians(length/realRadius), .radians(bounds/realRadius))
 	}
 }
 

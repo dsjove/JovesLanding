@@ -156,7 +156,7 @@ struct GaugeView: View {
 			}
 			//.scaleEffect(CGSize(width: geometry.size.width, height: geometry.size.height))
 		}
-		.aspectRatio(contentMode: .fit)
+		.aspectRatio(1, contentMode: .fit)
     }
 
 	struct GaugeBackgroundView: View {
@@ -304,7 +304,7 @@ struct GaugeView: View {
 				}
 				.stroke(range.color, lineWidth: geom.unit * 0.05)
 				let angle3 = state.angle(Double(range.values.lowerBound)) + (angle2 - angle1) / 2.0
-				CircleText(
+				CircleTextView(
 					text: range.label,
 					angle: angle3, tooFar: angle2 - angle1)
 						.font(.system(size: geom.unit * 0.05))

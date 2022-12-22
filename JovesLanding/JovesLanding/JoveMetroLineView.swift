@@ -43,15 +43,16 @@ struct JoveMetroLineView: View {
 		.navigationBarTitle(rail.name)
 		.toolbar {
 			Button {
-				presentEditName = true
+					presentEditName = true
 			} label: {
 				Image(systemName: "tag.fill")
 					.resizable()
-			}.frame(width: 44)
-		.aspectRatio(contentMode: .fit)
+			}
+				.frame(width: 44)
+		.		aspectRatio(1, contentMode: .fit)
 			ConnectionButtonView(rail: rail)
-		.frame(width: 44)
-		.aspectRatio(contentMode: .fit)
+				.frame(width: 44)
+		.		aspectRatio(1, contentMode: .fit)
 		}
 		.alert("Name", isPresented: $presentEditName,
 			actions: {
