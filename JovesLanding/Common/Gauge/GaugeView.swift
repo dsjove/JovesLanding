@@ -98,6 +98,22 @@ struct GaugeView: View {
 		}
 	}
 
+	struct Rings {
+		var rimRadius: Double = 0.995
+		var rimWidth: Double = 0.01
+		var rangeRadius: Double = 0.985
+		var rangeWidth: Double = 0.05
+		var tickRadius: Double = 0.88
+		var tick1Width: Double = 0.0
+		var tick2Width: Double = 0.0
+		var needleRadius: Double = 0.04
+		var needleWidth: Double = 0.007
+		var indicatorRadius: Double = 0.2
+		var indicatorWidth: Double = 0.2
+		var screw1Radius: Double = 0.06
+		var screw2Radius: Double = 0.03
+	}
+
 	//TODO: replace with ring information
 	//TODO: try to go all normalized graphics
 	struct Geometry {
@@ -179,7 +195,7 @@ struct GaugeView: View {
 
 		var body: some View {
 			//TODO: how do I apply view modifiers to view builder's sub
-			MyRadialLayout {
+			MyRadialLayout(radius: 0.2) {
 				let width = geom.unit *  0.185
 
 				if let indicators = state.indicators {
@@ -189,11 +205,11 @@ struct GaugeView: View {
 
 					LightIndicatorView(on: indicators.light)
 						.indicator(padding: geom.unit * 0.02)
-						.frame(height: width)
+						.frame(width: width)
 
 					ConnectionIndicatorView(connectionState: indicators.connectionState)
-						.indicator(padding: geom.unit * 0.04)
-						.frame(height: width)
+						.indicator(padding: geom.unit * 0.02)
+						.frame(width: width)
 
 					BatteryIndicatorView(progress: indicators.battery)
 						.indicator(padding: geom.unit * 0.02)

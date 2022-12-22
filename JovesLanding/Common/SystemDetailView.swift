@@ -12,9 +12,6 @@ import TrainsByJove
 class ServiceImpFactory {
 	private var impls: [UUID: Any] = [:]
 
-	init() {
-	}
-
 	@MainActor
 	func implementation(for device: BTDevice?) -> Any? {
 		if let device {

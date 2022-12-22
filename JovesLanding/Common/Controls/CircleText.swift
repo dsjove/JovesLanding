@@ -11,6 +11,7 @@ import SwiftUI
 struct CircleText_Preview: PreviewProvider {
 	static var previews: some View {
 		CircleText(text: "The quick brown fox jumps over the lazy dog.", angle: Angle(degrees: 60))
+			.font(.title2)
 			.frame(width: 200, height: 300)
 			.border(Color.green, width: 5)
 	}
@@ -22,7 +23,7 @@ public struct CircleText: View {
 	var alignment: Double = 0.5
 	var tooFar: Angle = Angle(degrees: 360)
 
-	@State private var textSizes: [Int:Double] = [:]
+	@State private var textSizes: [Int:CGSize] = [:]
 
 	public var body: some View {
 		GeometryReader { geometry in
@@ -36,8 +37,9 @@ public struct CircleText: View {
 						Text(String(element))
 							.background(Sizeable())
 							.onPreferenceChange(WidthPreferenceKey.self, perform: { size in
-								self.textSizes[offset] = Double(size)
+								self.textSizes[offset] = size
 							})
+						//.border(Color.green, width: 1)
 						Spacer()
 					}
 					.frame(width: diameter, height: diameter)
@@ -50,17 +52,23 @@ public struct CircleText: View {
 	}
 
 	private func angle(at index: Int, radius: Double) -> Angle {
-		var prefixLength = textSizes.filter{$0.key < index}.map{$0.value}.reduce(0,+)
+		guard textSizes.isEmpty == false else { return Angle(); }
+		var prefixLength = textSizes.filter{$0.key < index}.map{$0.value.width}.reduce(0,+)
+		let height: Double
 		if let mySize = textSizes[index] {
-			prefixLength += mySize * 0.5
+			prefixLength += mySize.width * 0.5
+			height = mySize.height
 		}
-		return .radians(prefixLength/radius)
+		else {
+			height = textSizes.first!.value.height
+		}
+		return .radians(prefixLength/(radius - height))
 	}
 }
 
 private struct WidthPreferenceKey: PreferenceKey {
-	typealias Value = Double
-	static var defaultValue = Value(0.0)
+	typealias Value = CGSize
+	static var defaultValue = CGSize()
 	static func reduce(value: inout Value, nextValue: () -> Value) {
 		value = nextValue()
 	}
@@ -70,7 +78,7 @@ private struct Sizeable: View {
 	var body: some View {
 		GeometryReader { geometry in
 			Color.clear
-				.preference(key: WidthPreferenceKey.self, value: geometry.size.width)
+				.preference(key: WidthPreferenceKey.self, value: geometry.size)
 		}
 	}
 }

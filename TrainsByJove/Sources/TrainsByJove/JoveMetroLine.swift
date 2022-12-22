@@ -131,8 +131,7 @@ public class JoveMetroLine: ObservableObject {
 	}
 
 	private func updateBattery() async {
-		let result = await cube.battery()
-		self.battery = result
+		self.battery = await cube.battery()
 	}
 
 	private func updateName() async {
@@ -164,7 +163,7 @@ public class JoveMetroLine: ObservableObject {
 			interval: DispatchQueue.SchedulerTimeType.Stride(.seconds(30)))  {
 				Task { [weak self] in
 					if let self {
-						_ = await self.updateBattery()
+						await self.updateBattery()
 					}
 				}
 			}

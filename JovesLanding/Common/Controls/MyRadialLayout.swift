@@ -77,7 +77,7 @@ struct MyRadialLayout: Layout {
         proposal.replacingUnspecifiedDimensions()
     }
 
-    let radius: Double = 0.2
+    let radius: Double
 
     /// Places the stack's subviews in a circle.
     /// - Tag: placeSubviewsRadial

@@ -11,8 +11,11 @@ struct Indicator: ViewModifier {
 	var padding: Double = 2.0
     func body(content: Content) -> some View {
 		ZStack {
-			Circle().fill(Color("Gauge/Indicator"))
+			Circle()
+				.fill(Color("Gauge/Indicator"))
+				.aspectRatio(1, contentMode: .fit)
 			content
+				.aspectRatio(1, contentMode: .fit)
 				.padding(padding)
 		}
     }
