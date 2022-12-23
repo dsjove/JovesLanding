@@ -7,7 +7,7 @@
 
 import SwiftUI
 import BTByJove
-import TrainsByJove
+import Infrastructure
 
 struct TheJoveExpressView: View {
 	@ObservedObject var train: TheJoveExpress

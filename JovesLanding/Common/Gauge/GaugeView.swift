@@ -7,9 +7,10 @@
 //
 
 import SwiftUI
-import TrainsByJove // engine state
+import Infrastructure // engine state
 
 extension GaugeView.State {
+	//TODO: evolve as GaugeView becomes more SwiftUIy
 	static var clock: GaugeView.State {
 		var state = GaugeView.State()
 		state.minMax = 0...43200
@@ -18,7 +19,6 @@ extension GaugeView.State {
 		state.skipfirst = true
 		state.values = [10000, 20000, 30000]
 		state.transformMajor = {($0 / state.majorMod).description}
-		//TODO: make reasonable
 		state.ranges = [
 			GRange(values:10000.0...20000.0, color: Color(0.098, 0.098, 0.439)),
 			GRange(values:20000.0...30000.0, color: Color(0.098, 0.098, 0.439)),
@@ -28,7 +28,7 @@ extension GaugeView.State {
 	}
 }
 
-//TODO: make into generic paramter for indicator layer
+//TODO: delete
 struct Indicators {
 	var connectionState: ConnectionState = .disconneted
 	var motorState: MotorState = .idle
@@ -42,6 +42,8 @@ struct GaugeView: View {
 		var second: Double? = nil
 		var minMax: ClosedRange<Int> = 0...0 // TODO: Double
 
+		var rings: Rings = Rings()
+
 		//TODO: ticks: [Double]
 		var majorMod: Int = 0
 		var minorMod: Int = 0
@@ -54,7 +56,8 @@ struct GaugeView: View {
 		var transformMajor: (Int)->String = {$0.description}
 		struct GTick {
 			var mod: Int
-			var length: Double
+			var outerRadius: Double
+			var innerRadius: Double
 			var thickness: Double
 			var colorLine: Color
 			var colorText: Color
@@ -98,27 +101,31 @@ struct GaugeView: View {
 		}
 	}
 
+//TODO: break out for individual Views
 	struct Rings {
-		var rimRadius: Double = 0.995
-		var rimWidth: Double = 0.01
-		var rangeRadius: Double = 0.985
-		var rangeWidth: Double = 0.05
-		var tickRadius: Double = 0.88
-		var tick1Width: Double = 0.0
-		var tick2Width: Double = 0.0
-		var needleRadius: Double = 0.04
-		var needleWidth: Double = 0.007
-		var indicatorRadius: Double = 0.2
-		var indicatorWidth: Double = 0.2
-		var screw1Radius: Double = 0.06
-		var screw2Radius: Double = 0.03
+		var rimOuterRadius: Double = 0.995
+		var rimInnerRadius: Double = 0.992
+		var rangeOuterRadius: Double = 0.989
+		var rangeInnerRadius: Double = 0.900
+		var tickOuterRadius: Double = 0.900
+		var tick1Radius: Double = 0.880
+		var tick1Width: Double = 0.004
+		var tick2Radius: Double = 0.860
+		var tick2Width: Double = 0.008
+		var tickTextOuterRadius: Double = 0.860
+		var tickTextInnerRadius: Double = 0.720
+		var needleRadius: Double = 0.680
+		var needleWidth: Double = 0.055
+		var indicatorRadius: Double = 0.200
+		var indicatorWidth: Double = 0.185
+		var screwOuterRadius: Double = 0.120
+		var screwInnerRadius: Double = 0.060
 	}
 
-	//TODO: replace with ring information
 	//TODO: try to go all normalized graphics
 	struct Geometry {
-		let width: Double
-		let height: Double
+		private let width: Double
+		private let height: Double
 
 		init(_ geom: GeometryProxy) {
 			width = geom.size.width
@@ -126,6 +133,8 @@ struct GaugeView: View {
 		}
 
 		var unit: Double { min(width, height) }
+
+		var radius: Double { unit / 2.0 }
 
 		var center: CGPoint { CGPoint(x: width / 2.0, y: height / 2.0) }
 
@@ -148,7 +157,7 @@ struct GaugeView: View {
 			ZStack {
 				GaugeBackgroundView(geom: geom, state: state)
 				GaugeTicksView(geom: geom, state: state)
-				GaugeLabelView(geom: geom, state: state)
+				GaugeIndicatorView(geom: geom, state: state)
 				GaugeRangeView(geom: geom, state: state)
 				GaugeFullNeedleView(geom: geom, state: state)
 				GaugeNeedleScrewView(geom: geom, state: state)
@@ -156,7 +165,7 @@ struct GaugeView: View {
 			}
 			//.scaleEffect(CGSize(width: geometry.size.width, height: geometry.size.height))
 		}
-		.aspectRatio(1, contentMode: .fit)
+		//.aspectRatio(1, contentMode: .fit)
     }
 
 	struct GaugeBackgroundView: View {
@@ -164,6 +173,7 @@ struct GaugeView: View {
 		let state: State
 
 		var body: some View {
+			let radius = geom.radius
 			Circle()
 				.fill(.radialGradient(
 					stops: [
@@ -173,7 +183,7 @@ struct GaugeView: View {
 							color: Color(0.265, 0.265, 0.265), location: 0.96),
 						Gradient.Stop(
 							color: Color(0.125, 0.125, 0.125), location: 1.0),
-					], center: UnitPoint(x: 0.5, y: 0.5), startRadius: 0, endRadius: geom.unit / 2.0))
+					], center: UnitPoint(x: 0.5, y: 0.5), startRadius: 0, endRadius: radius))
 			Circle()
 				.fill(.radialGradient(
 					stops: [
@@ -185,18 +195,18 @@ struct GaugeView: View {
 							color: Color(0.0, 0.0, 0.0, 0.468), location: 0.96),
 						Gradient.Stop(
 							color: Color(0.0, 0.0, 0.0, 0.546), location: 1.0),
-					], center: UnitPoint(x: 0.5, y: 0.5), startRadius: 0, endRadius: geom.unit / 2.0))
+					], center: UnitPoint(x: 0.5, y: 0.5), startRadius: 0, endRadius: radius))
 		}
 	}
 
-	struct GaugeLabelView: View {
+	struct GaugeIndicatorView: View {
 		let geom: Geometry
 		let state: State
 
 		var body: some View {
 			//TODO: how do I apply view modifiers to view builder's sub
-			MyRadialLayout(radius: 0.2) {
-				let width = geom.unit *  0.185
+			MyRadialLayout(radius: state.rings.indicatorRadius) {
+				let width = geom.unit * state.rings.indicatorWidth
 
 				if let indicators = state.indicators {
 					MotorIndicatorView(motorState: indicators.motorState)
@@ -242,28 +252,26 @@ struct GaugeView: View {
 				EmptyView()
 			}
 			else {
-				let bigLen = geom.unit * 0.04
-				let lilLen = geom.unit * 0.02
+				let radius = geom.radius * state.rings.tickOuterRadius
+				let bigLen = geom.unit * (state.rings.tickOuterRadius - state.rings.tick2Radius)
+				let lilLen = geom.unit * (state.rings.tickOuterRadius - state.rings.tick1Radius)
 				let lineLength = (big ? bigLen : lil ? lilLen : 0)
-				let lineWidth = geom.unit * (big ? 0.008 : 0.004)
-				let offset = bigLen - lineLength
+				let lineWidth = geom.unit * (big ? state.rings.tick2Width : state.rings.tick1Width)
 				let angle = state.angle(Double(idx))
-				let move = ((geom.unit * -0.50) + bigLen) + (geom.unit * 0.06)
 				Path { path in
-					path.move(to: geom.center(x: 0, y: -offset))
-					path.addLine(to: geom.center(x: 0, y: -lineLength - offset))
+					path.move(to: geom.center(x: 0, y: -radius))
+					path.addLine(to: geom.center(x: 0, y: -radius + lineLength))
 				}
-				.offset(CGSize(width: 0, height: move))
 				.rotation(angle)
 				.stroke(Color("Gauge/Tick"), lineWidth: lineWidth)
 				if (big) {
-					let h = move + lineLength
-					let v = state.transformMajor(idx)
-					Text(v)
+					let height = geom.radius * (state.rings.tickTextOuterRadius - state.rings.tickTextInnerRadius)
+					let radius = geom.radius * state.rings.tickTextOuterRadius
+					Text(state.transformMajor(idx))
 						.lineLimit(1)
-						.font(.system(size: geom.unit * 0.06))
+						.font(.system(size: height))
 						.foregroundColor(Color("Gauge/Tick"))
-						.offset(CGSize(width: 0.0, height: h))
+						.offset(CGSize(width: 0.0, height: -radius + height))
 						.rotationEffect(angle)
 				}
 			}
@@ -291,23 +299,26 @@ struct GaugeView: View {
 				EmptyView()
 			}
 			else {
+				let radius = geom.radius * state.rings.rangeOuterRadius
+				let lineWidth = radius - geom.radius * state.rings.rangeInnerRadius
+
 				let angle1 = state.angle(Double(range.values.lowerBound), -90)
 				let angle2 = state.angle(Double(range.values.upperBound), -90)
-				let radius = (geom.unit / 2.0) - (geom.unit * 0.05) / 2.0 - geom.unit * 0.01
 				Path { path in
 					path.addArc(
 						center: geom.center,
-						radius: radius,
+						radius: radius - lineWidth / 2.0,
 						startAngle: angle1,
 						endAngle: angle2,
 						clockwise: false)
 				}
-				.stroke(range.color, lineWidth: geom.unit * 0.05)
+				.stroke(range.color, lineWidth: lineWidth)
 				let angle3 = state.angle(Double(range.values.lowerBound)) + (angle2 - angle1) / 2.0
 				CircleTextView(
 					text: range.label,
 					angle: angle3, tooFar: angle2 - angle1)
-						.font(.system(size: geom.unit * 0.05))
+						.font(.system(size: lineWidth * 0.75))
+						.frame(width: radius*2, height: radius * 2)
 			}
 		}
 	}
@@ -317,17 +328,19 @@ struct GaugeView: View {
 		let state: State
 
 		var body: some View {
+			let radius = geom.radius * state.rings.needleRadius
+			let width = geom.unit * state.rings.needleWidth
 			Path { path in
 				path.move(to: geom.center)
-				path.addLine(to: geom.center(x: geom.unit * 0.04, y: 0))
-				path.addLine(to: geom.center(x: 0, y: -geom.unit * 0.35))
+				path.addLine(to: geom.center(x: width / 2.0, y: 0))
+				path.addLine(to: geom.center(x: 0, y: -radius))
 			}
 			.fill(Color("Gauge/Needle1"))
 
 			Path { path in
 				path.move(to: geom.center)
-				path.addLine(to: geom.center(x: geom.unit * -0.04, y: 0))
-				path.addLine(to: geom.center(x: 0, y: -geom.unit * 0.35))
+				path.addLine(to: geom.center(x: -width / 2.0, y: 0))
+				path.addLine(to: geom.center(x: 0, y: -radius))
 			}
 			.fill(Color("Gauge/Needle2"))
 		}
@@ -352,10 +365,10 @@ struct GaugeView: View {
 		var body: some View {
 			Circle()
 				.fill(Color("Gauge/ScrewInner"))
-				.frame(width: geom.unit * 0.08)
+				.frame(width: geom.radius * state.rings.screwOuterRadius)
 			Circle()
-				.strokeBorder(Color("Gauge/ScrewOuter"), lineWidth: geom.unit * 0.02)
-				.frame(width: geom.unit * 0.08)
+				.fill(Color("Gauge/ScrewOuter"))
+				.frame(width: geom.radius * state.rings.screwInnerRadius)
 		}
 	}
 
@@ -364,9 +377,11 @@ struct GaugeView: View {
 		let state: State
 
 		var body: some View {
+			let radius = geom.radius * state.rings.rimOuterRadius
+			let lineWidth = radius - geom.unit * 0.5 * state.rings.rimInnerRadius
 			Circle()
-				.strokeBorder(Color("Gauge/Rim"), lineWidth: geom.unit * 0.008)
-				.frame(width: geom.width - geom.unit * 0.004)
+				.strokeBorder(Color("Gauge/Rim"), lineWidth: lineWidth)
+				.frame(width: radius * 2.0)
 		}
 	}
 }

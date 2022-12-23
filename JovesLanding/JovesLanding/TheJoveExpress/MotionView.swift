@@ -6,7 +6,7 @@
 //
 
 import SwiftUI
-import TrainsByJove
+import Infrastructure
 
 struct MotionView: View {
     var body: some View {

@@ -8,7 +8,7 @@
          location = "group:BTByJove">
       </FileRef>
       <FileRef
-         location = "group:TrainsByJove">
+         location = "group:JovesLanding/../Infrastructure">
       </FileRef>
    </Group>
    <FileRef

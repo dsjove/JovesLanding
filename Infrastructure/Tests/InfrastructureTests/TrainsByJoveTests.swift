@@ -1,11 +1,11 @@
 import XCTest
-@testable import TrainsByJove
+@testable import Infrastructure
 
-final class TrainsByJoveTests: XCTestCase {
+final class InfrastructureTests: XCTestCase {
     func testExample() throws {
         // This is an example of a functional test case.
         // Use XCTAssert and related functions to verify your tests produce the correct
         // results.
-        XCTAssertEqual(TrainsByJove().text, "Hello, World!")
+        XCTAssertEqual(Infrastructure().text, "Hello, World!")
     }
 }

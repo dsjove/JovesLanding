@@ -6,7 +6,7 @@
 //
 
 import SwiftUI
-import TrainsByJove
+import Infrastructure
 
 struct ConnectionIndicatorView: View {
 	let connectionState: ConnectionState

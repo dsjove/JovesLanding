@@ -3,7 +3,7 @@
 import PackageDescription
 
 let package = Package(
-    name: "TrainsByJove",
+    name: "Infrastructure",
     platforms: [
         .macOS(.v13),
         .iOS(.v16),
@@ -12,18 +12,18 @@ let package = Package(
     ],
     products: [
         .library(
-            name: "TrainsByJove",
-            targets: ["TrainsByJove"]),
+            name: "Infrastructure",
+            targets: ["Infrastructure"]),
     ],
     dependencies: [
         .package(path: "../BTByJove")
     ],
     targets: [
         .target(
-            name: "TrainsByJove",
+            name: "Infrastructure",
             dependencies: ["BTByJove"]),
         .testTarget(
-            name: "TrainsByJoveTests",
-            dependencies: ["TrainsByJove"]),
+            name: "InfrastructureTests",
+            dependencies: ["Infrastructure"]),
     ]
 )

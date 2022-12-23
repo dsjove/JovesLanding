@@ -6,7 +6,7 @@
 //
 
 import SwiftUI
-import TrainsByJove
+import Infrastructure
 
 extension GaugeView.State {
 	static func rail() -> GaugeView.State {

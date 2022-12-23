@@ -53,6 +53,7 @@ public struct CircleTextView: View {
 			}
 			.rotationEffect(-fullAngle * self.alignment + self.angle)
 			.opacity(fullAngle <= tooFar ? 1.0 : tooFar.degrees / fullAngle.degrees)
+			//.border(Color.green, width: 1)
 		}
 	}
 

@@ -5,7 +5,7 @@
 //  Created by Federico on 16/04/2022.
 //
 import SwiftUI
-import TrainsByJove
+import Infrastructure
 
 struct BatteryIndicatorView: View {
     let progress: Double?
@@ -18,12 +18,14 @@ struct BatteryIndicatorView: View {
 					.resizable()
 					.aspectRatio(contentMode: .fit)
 					.foregroundStyle(color(), .black)
+					/*
 				Text(progress != nil ? "\(Int(self.progress! * 100))%" : "")
-					.font(.system(size: geom.size.height * 0.5))
+					.font(.system(size: geom.size.height * 0.25))
 					.lineLimit(1)
 					.allowsTightening(true)
 					.foregroundColor(Color("Battery/Text"))
 					.frame(alignment: .leading)
+					*/
 			}
 		}
 	}

@@ -7,7 +7,7 @@
 
 import SwiftUI
 import BTByJove
-import TrainsByJove
+import Infrastructure
 
 struct JoveMetroLineView: View {
 	@ObservedObject private var rail: JoveMetroLine

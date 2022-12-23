@@ -7,7 +7,7 @@
 
 import SwiftUI
 import BTByJove
-import TrainsByJove
+import Infrastructure
 
 struct HealthView: View {
 	@ObservedObject var health: BTSubject<HeartHealth>

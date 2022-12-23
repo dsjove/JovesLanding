@@ -24,12 +24,14 @@ struct SystemSelectorView: View {
 	var body: some View {
 		NavigationSplitView(columnVisibility: $visibility) {
 			Group {
+				if client.devices.isEmpty {
+					Text("No Systems Found")
+				}
 				List(client.devices, selection: $device) { device in
 					let _ = models.implementation(for: device)
 					NavigationLink(device.name, value: device)
 				}
 			}
-			.navigationTitle("Systems")
 		}
 		detail: {
 			SystemDetailView(impl: models.implementation(for: device))

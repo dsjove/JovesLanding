@@ -7,7 +7,7 @@
 
 import SwiftUI
 import BTByJove
-import TrainsByJove
+import Infrastructure
 
 struct EngineView: View {
 	@ObservedObject var calibration: BTSubject<EngineRational>

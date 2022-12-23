@@ -7,7 +7,7 @@
 
 import SwiftUI
 import BTByJove
-import TrainsByJove
+import Infrastructure
 
 struct CameraView: View {
 	@ObservedObject var fps: BTSubject<CameraFPS>

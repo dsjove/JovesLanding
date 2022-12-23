@@ -6,7 +6,7 @@
 //
 
 import SwiftUI
-import TrainsByJove
+import Infrastructure
 
 struct JoveMetroLineView: View {
 	@ObservedObject var rail: JoveMetroLine
@@ -22,13 +22,13 @@ struct JoveMetroLineView: View {
 			Image("Metal")
 				.resizable()
 				.ignoresSafeArea()
-			ViewThatFits(in: .horizontal) {
-				HStack(alignment: .center, spacing: 24.0) {
+			ViewThatFits(in: [.horizontal]) {
+				VStack(alignment: .center, spacing: 24.0) {
 					JoveMetroLineGauageView(rail: rail)
 					JoveMetroLineControlsView(rail: rail)
 					Spacer()
 				}
-				VStack(alignment: .center, spacing: 24.0) {
+				HStack(alignment: .center, spacing: 24.0) {
 					JoveMetroLineGauageView(rail: rail)
 					JoveMetroLineControlsView(rail: rail)
 					Spacer()

@@ -7,7 +7,7 @@
 
 import SwiftUI
 import BTByJove
-import TrainsByJove
+import Infrastructure
 
 class ServiceImpFactory {
 	private var impls: [UUID: Any] = [:]

@@ -6,7 +6,7 @@
 //
 
 import SwiftUI
-import TrainsByJove
+import Infrastructure
 
 struct JoveMetroLineGauageView : View {
 	@ObservedObject var rail: JoveMetroLine

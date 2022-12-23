@@ -6,7 +6,7 @@
 //
 
 import SwiftUI
-import TrainsByJove
+import Infrastructure
 
 struct MotorIndicatorView: View {
 	let motorState: MotorState

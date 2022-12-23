@@ -7,7 +7,7 @@
 
 import SwiftUI
 import BTByJove
-import TrainsByJove
+import Infrastructure
 
 struct SystemSelectorView: View {
 	@ObservedObject private var client: BTClient
@@ -22,6 +22,9 @@ struct SystemSelectorView: View {
 
     var body: some View {
 		NavigationStack {
+			if client.devices.isEmpty {
+				Text("No Systems Found")
+			}
 			List(client.devices) { device in
 				NavigationLink(device.name, value: device)
 			}
