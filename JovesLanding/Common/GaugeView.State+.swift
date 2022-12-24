@@ -9,6 +9,7 @@ import SwiftUI
 import Infrastructure
 
 struct Indicators {
+	var image: Image
 	var connectionState: ConnectionState = .disconneted
 	var motorState: MotorState = .idle
 	var battery: Double? = nil
@@ -23,7 +24,7 @@ struct IndicatorView: View {
 	var body: some View {
 		let width = geom.width(width)
 
-		MotorIndicatorView(motorState: indicators.motorState)
+		MotorIndicatorView(image: indicators.image, motorState: indicators.motorState)
 			.indicator(padding: width * 0.15)
 			.frame(width: width)
 
@@ -57,7 +58,7 @@ extension Gauge.GState {
 				((i + 5) % 5) != 0
 			}),
 			Gauge.GTick(increment: 25, innerRadius: 0.820, transform: { _ in nil }),
-			Gauge.GTick(increment: 25, outerRadius: 0.820, innerRadius: 0.700, thickness: 0.000),
+			Gauge.GTick(increment: 25, outerRadius: 0.820, innerRadius: 0.680, thickness: 0.000),
 		]
 		return state
 	}
@@ -66,8 +67,6 @@ extension Gauge.GState {
 		var state = Gauge.GState()
 		state.values = [0]
 		state.minMax = 0...256
-		//state.majorMod = 32
-		//state.minorMod = 4
 		state.angles = 210...510
 		state.ranges = [
 			Gauge.GRange(values: -100 ... 0, color: Color("Lights/Off"), label: "Dark"),

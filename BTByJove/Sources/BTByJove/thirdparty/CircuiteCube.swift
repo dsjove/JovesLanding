@@ -9,7 +9,7 @@ import Foundation
 
 public final class CircuiteCube {
 	public static let Service = BTServiceIdentity(
-		name: "Tenka",
+		name: "Circuit Cube",
 		id: "6e400001-b5a3-f393-e0a9-e50e24dcca9e")
 
 	private struct Component: BTComponent {
@@ -78,6 +78,7 @@ public final class CircuiteCube {
 		return device.name
 	}
 
+	//TODO: Not working!!!
 	public func name(set name: String = "") async -> Bool {
 		let cmd = "n\(name.safeName())\n"
 		let success = await uart.call(cmd.data(using: String.Encoding.ascii)) { data in

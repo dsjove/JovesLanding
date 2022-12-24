@@ -51,7 +51,7 @@ struct TrainToolbar: ViewModifier {
 
 	init(train: TheJoveExpress) {
 		self.train = train
-		self.name = train.name
+		self.name = train.name2
 	}
 
 	func body(content: Content) -> some View {

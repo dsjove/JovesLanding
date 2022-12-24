@@ -12,8 +12,8 @@ import Infrastructure
 struct SystemSelectorView: View {
 	@ObservedObject private var client: BTClient
 
-	@State private var models: ServiceImpFactory = {
-		ServiceImpFactory()
+	@State private var models: InfrastructureImpFactory = {
+		InfrastructureImpFactory()
 	}()
 
 	init(_ client: BTClient) {
@@ -22,11 +22,15 @@ struct SystemSelectorView: View {
 
     var body: some View {
 		NavigationStack {
-			if client.devices.isEmpty {
-				Text("No Systems Found")
-			}
-			List(client.devices) { device in
-				NavigationLink(device.name, value: device)
+			Group {
+				if client.devices.isEmpty {
+					Text("No systems found.")
+				}
+				else {
+					List(client.devices) { device in
+						NavigationLink(device.name, value: device)
+					}
+				}
 			}
 			.onAppear() {
 				client.scanning = true

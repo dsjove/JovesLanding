@@ -9,30 +9,6 @@ import SwiftUI
 import BTByJove
 import Infrastructure
 
-class ServiceImpFactory {
-	private var impls: [UUID: Any] = [:]
-
-	@MainActor
-	func implementation(for device: BTDevice?) -> Any? {
-		if let device {
-			if let existing = impls[device.id] {
-				return existing
-			}
-			if device.service == JoveMetroLine.Service {
-				let impl = JoveMetroLine(device: device)
-				impls[device.id] = impl
-				return impl
-			}
-			if device.service == TheJoveExpress.Service {
-				let impl = TheJoveExpress(device: device)
-				impls[device.id] = impl
-				return impl
-			}
-		}
-		return nil
-	}
-}
-
 struct SystemDetailView: View {
 	let impl: Any?
 

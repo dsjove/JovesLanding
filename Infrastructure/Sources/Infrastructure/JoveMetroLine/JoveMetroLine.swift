@@ -8,6 +8,12 @@
 import Foundation
 import Combine
 import BTByJove
+import SwiftUI
+
+extension JoveMetroLine: InfrastructureImpl {
+	public var category: InfrastructureCategory { .transportation }
+	public var image: Image { Image(systemName: "train.side.front.car") }
+}
 
 @MainActor
 public class JoveMetroLine: ObservableObject {

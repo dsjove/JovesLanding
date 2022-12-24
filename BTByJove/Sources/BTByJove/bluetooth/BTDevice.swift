@@ -32,6 +32,7 @@ public class BTDevice: NSObject, ObservableObject, BTControl, Identifiable {
 		peripheral.delegate = self
 	}
 
+//TODO: Mock a CBPeripheral intead without testing framework dependency nor having a facade cascade. We may need to bring in some good ol' obj-c dynamics.
 	public init(name: String?, deviceID: UUID, service: BTServiceIdentity, makeConnection: @escaping (Bool)->()) {
 		self.id = deviceID
 		self.peripheral = nil
@@ -162,7 +163,6 @@ extension BTDevice {
 }
 
 extension BTDevice: CBPeripheralDelegate {
-
 	public func peripheral(_ peripheral: CBPeripheral, didDiscoverServices error: Error?) {
 		for service in peripheral.services ?? [] {
 			peripheral.discoverCharacteristics(nil, for: service)

@@ -9,10 +9,11 @@ import SwiftUI
 import Infrastructure
 
 struct MotorIndicatorView: View {
+	var image: Image = Image(systemName: "train.side.front.car")
 	let motorState: MotorState
 	
     var body: some View {
-		Image(systemName: "train.side.front.car")
+		image
 			.resizable()
 			.foregroundColor(color())
 			.aspectRatio(contentMode: .fit)

@@ -13,11 +13,12 @@ public enum Gauge {
 		var values: [Double] = [0.0]
 		var minMax: ClosedRange<Double> = 0...0
 		var angles: ClosedRange<Double> = 0...360
+
 		var ranges: [Gauge.GRange] = []
 		var ticks: [Gauge.GTick] = []
 		var needles: [Int: Gauge.GNeedle] = [0:Gauge.GNeedle()]
 
-		func values(inc: Double) -> [(Int, Double)] {
+		func enumerated(inc: Double) -> [(Int, Double)] {
 			var ds: [(Int, Double)] = [];
 			var v = minMax.lowerBound
 			var i = 0
@@ -189,7 +190,7 @@ extension Gauge {
 			geom: Geometry,
 			state: GState,
 			outerRadius: Double = 0.995,
-			innerRadius: Double = 0.992,
+			innerRadius: Double = 0.990,
 			color: Color = Color("Gauge/Rim")) -> some View {
 
 		let radius = geom.radius(outerRadius)
@@ -315,7 +316,7 @@ extension Gauge {
 			state: GState,
 			@ViewBuilder tick: @escaping (Geometry, GState, GTick, Double)->some View = Gauge.tick) -> some View {
 		ForEach(Array(state.ticks.enumerated()), id: \.offset) { (e, t) in
-			ForEach(state.values(inc: t.increment), id: \.0) { (i, v) in
+			ForEach(state.enumerated(inc: t.increment), id: \.0) { (i, v) in
 				if t.draw(i, v, state.minMax) {
 					tick(geom, state, t, v)
 				}
@@ -327,7 +328,8 @@ extension Gauge {
 	static func tick(
 			geom: Geometry,
 			state: GState,
-			tick: GTick, value: Double) -> some View {
+			tick: GTick,
+			value: Double) -> some View {
 		let outer = geom.radius(tick.outerRadius)
 		let inner = geom.radius(tick.innerRadius)
 		let angle = state.angle(value)

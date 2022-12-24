@@ -7,6 +7,7 @@
 
 import Foundation
 import Combine
+import SwiftUI
 import BTByJove
 
 //FUTURE:
@@ -64,6 +65,12 @@ public enum TrainPower: UInt8, BTSubCategory {
 	}
 }
 
+extension TheJoveExpress: InfrastructureImpl {
+	public var category: InfrastructureCategory { .transportation }
+	public var image: Image { Image(systemName: "Train") }
+	public var name: String { name2.feedback }
+}
+
 public class TheJoveExpress: ObservableObject {
 	public static let Service = BTServiceIdentity(name: "TJEx");
 	
@@ -79,7 +86,7 @@ public class TheJoveExpress: ObservableObject {
 		}
 	}
 
-	public var name: BTSubject<String>
+	public var name2: BTSubject<String>
 	public var heart: Heart
 	public var engine: Engine
 	public var lights: Lights
@@ -95,7 +102,7 @@ public class TheJoveExpress: ObservableObject {
 		self.device = device
 		self.state = .disconneted
 		
-		self.name = BTSubject(
+		self.name2 = BTSubject(
 			BTCharacteristicIdentity(TrainCategory.train, TrainPower.calibration),
 			device,
 			device.name)
@@ -132,7 +139,7 @@ public class TheJoveExpress: ObservableObject {
 	}
 	
 	public func reset() {
-		name.reset()
+		name2.reset()
 		heart.reset()
 		engine.reset()
 		lights.reset()

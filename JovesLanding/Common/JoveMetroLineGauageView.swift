@@ -25,7 +25,7 @@ struct JoveMetroLineGauageView : View {
 			return state
 		}())
 		_indicators = State(initialValue: {
-			var indicators = Indicators()
+			var indicators = Indicators(image: rail.image)
 			indicators.battery = rail.battery
 			indicators.light = rail.lights
 			indicators.motorState = rail.motorState

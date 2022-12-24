@@ -7,14 +7,15 @@
 
 import SwiftUI
 import BTByJove
+import Infrastructure
 
 struct SystemSelectorView: View {
 	@ObservedObject private var client: BTClient
 	@State private var device: BTDevice?
 	@State private var visibility: NavigationSplitViewVisibility = .all
 	
-	@State private var models: ServiceImpFactory = {
-		ServiceImpFactory()
+	@State private var models: InfrastructureImpFactory = {
+		InfrastructureImpFactory()
 	}()
 
 	init(_ client: BTClient) {
@@ -25,11 +26,13 @@ struct SystemSelectorView: View {
 		NavigationSplitView(columnVisibility: $visibility) {
 			Group {
 				if client.devices.isEmpty {
-					Text("No Systems Found")
+					Text("No systems found.")
 				}
-				List(client.devices, selection: $device) { device in
-					let _ = models.implementation(for: device)
-					NavigationLink(device.name, value: device)
+				else {
+					List(client.devices, selection: $device) { device in
+						let _ = models.implementation(for: device)
+						NavigationLink(device.name, value: device)
+					}
 				}
 			}
 		}

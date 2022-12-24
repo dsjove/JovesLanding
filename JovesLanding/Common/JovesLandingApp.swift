@@ -20,9 +20,9 @@ extension BTClient {
 
 	public static let services: [BTServiceIdentity] = {
 		var base = [
-			TheJoveExpress.Service,
+		//	TheJoveExpress.Service,
 			CircuiteCube.Service,
-			LegoPoweredUp.Service,
+		//	LegoPoweredUp.Service,
 		]
 		if (mocking) {
 			base.append(BTServiceIdentity(name: "Garbage", id: UUID()))

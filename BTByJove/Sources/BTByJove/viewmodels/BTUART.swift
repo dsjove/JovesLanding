@@ -9,6 +9,7 @@ import Foundation
 import Combine
 import Collections
 
+//TODO: implement all correct behavors
 public final actor BTUART {
 	public let id = CombineIdentifier()
 	private let controlChar: BTCharacteristicIdentity
