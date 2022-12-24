@@ -11,7 +11,7 @@ import Infrastructure
 
 struct SystemSelectorView: View {
 	@ObservedObject private var client: BTClient
-	@State private var device: BTDevice?
+	@State private var device: InfrastructureEntry?
 	@State private var visibility: NavigationSplitViewVisibility = .all
 	
 	@State private var models: InfrastructureImpFactory = {
@@ -30,18 +30,19 @@ struct SystemSelectorView: View {
 				}
 				else {
 					List(client.devices, selection: $device) { device in
-						let _ = models.implementation(for: device)
-						NavigationLink(device.name, value: device)
+						let impl = models.implementation(for: device);
+						let entry = InfrastructureEntry(device.id, impl)
+						NavigationLink(device.name, value: entry)
 					}
 				}
 			}
 		}
 		detail: {
-			SystemDetailView(impl: models.implementation(for: device))
+			SystemDetailView(impl: device?.impl)
 		}
 		.onChange(of: device) { [device] newValue in
 			if device?.id != newValue?.id {
-				newValue?.connect()
+				Task { await newValue?.impl?.connect() }
 			}
 			visibility = newValue != nil ? .detailOnly : .all
 		}

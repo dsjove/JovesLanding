@@ -37,6 +37,24 @@ public struct Unsupported: InfrastructureImpl {
 	}
 }
 
+public struct InfrastructureEntry: Identifiable, Hashable {
+	public let id: UUID
+	public let impl: (any InfrastructureImpl)?
+
+	public init(_ id: UUID, _ impl: (any InfrastructureImpl)?) {
+		self.id = id
+		self.impl = impl
+	}
+
+	public static func == (lhs: Self, rhs: Self) -> Bool {
+		lhs.id == rhs.id
+	}
+
+	public func hash(into hasher: inout Hasher) {
+		id.hash(into: &hasher)
+	}
+}
+
 public class InfrastructureImpFactory {
 	private var impls: [UUID: any InfrastructureImpl] = [:]
 

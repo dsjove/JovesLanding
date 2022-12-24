@@ -28,7 +28,9 @@ struct SystemSelectorView: View {
 				}
 				else {
 					List(client.devices) { device in
-						NavigationLink(device.name, value: device)
+						let impl = models.implementation(for: device);
+						let entry = InfrastructureEntry(device.id, impl)
+						NavigationLink(device.name, value: entry)
 					}
 				}
 			}
@@ -38,16 +40,16 @@ struct SystemSelectorView: View {
 			.onDisappear() {
 				client.scanning = false
 			}
-			.navigationDestination(for: BTDevice.self) { device in
-				SystemDetailView(impl: models.implementation(for: device))
+			.navigationDestination(for: InfrastructureEntry.self) { device in
+				SystemDetailView(impl: device.impl)
 					.padding(0)
 					.ignoresSafeArea(edges: Edge.Set.all.subtracting(.top))
-					.navigationTitle(device.name)
+					//.navigationTitle(device.impl?.name ?? "")
 					.onAppear() {
-						device.connect()
+						Task { await device.impl?.connect() }
 					}
 					.onDisappear() {
-						device.disconnect()
+						Task { await device.impl?.disconnect() }
 					}
 			}
 		}

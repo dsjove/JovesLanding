@@ -20,7 +20,7 @@ struct TheJoveExpressView: View {
 
 	init(train: TheJoveExpress) {
 		self.train = train
-		self.name = train.name
+		self.name = train.name2
 		self.lightsPower = train.lights.power
 		self.lightsState = train.lights.state
 		self.enginePower = train.engine.power
