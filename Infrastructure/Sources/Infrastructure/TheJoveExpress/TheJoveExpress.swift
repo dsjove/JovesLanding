@@ -71,6 +71,7 @@ extension TheJoveExpress: InfrastructureImpl {
 	public var name: String { name2.feedback }
 }
 
+@MainActor
 public class TheJoveExpress: ObservableObject {
 	public static let Service = BTServiceIdentity(name: "TJEx");
 	
@@ -161,12 +162,12 @@ public class TheJoveExpress: ObservableObject {
 		case .connected:
 			self.beatTime = Date()
 			self.beatCheck?.invalidate()
-			self.beatCheck = Timer.scheduledTimer(withTimeInterval: 2.5, repeats: true) { [weak self] _ in
-				if let self = self {
-					if self.beatTime!.timeIntervalSinceNow < -5.0 {
+			self.beatCheck = Timer.scheduledTimer(withTimeInterval: 2.5, repeats: true) { /*[weak self]*/ _ in
+				//if let self = self {
+					//if self.beatTime!.timeIntervalSinceNow < -5.0 {
 						//self.state = .dead
-					}
-				}
+					//}
+				//}
 			}
 		}
 	}

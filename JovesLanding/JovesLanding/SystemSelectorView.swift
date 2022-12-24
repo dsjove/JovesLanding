@@ -32,7 +32,12 @@ struct SystemSelectorView: View {
 					List(client.devices, selection: $device) { device in
 						let impl = models.implementation(for: device);
 						let entry = InfrastructureEntry(device.id, impl)
-						NavigationLink(device.name, value: entry)
+						NavigationLink(value: entry) {
+							HStack {
+								impl.image
+								Text(impl.name)
+							}
+						}
 					}
 				}
 			}
@@ -42,7 +47,7 @@ struct SystemSelectorView: View {
 		}
 		.onChange(of: device) { [device] newValue in
 			if device?.id != newValue?.id {
-				Task { await newValue?.impl?.connect() }
+				newValue?.impl.connect()
 			}
 			visibility = newValue != nil ? .detailOnly : .all
 		}

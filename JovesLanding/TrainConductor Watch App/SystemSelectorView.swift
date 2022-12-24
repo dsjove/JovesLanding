@@ -30,7 +30,12 @@ struct SystemSelectorView: View {
 					List(client.devices) { device in
 						let impl = models.implementation(for: device);
 						let entry = InfrastructureEntry(device.id, impl)
-						NavigationLink(device.name, value: entry)
+						NavigationLink(value: entry) {
+							HStack {
+								impl.image
+								Text(impl.name)
+							}
+						}
 					}
 				}
 			}
@@ -44,12 +49,12 @@ struct SystemSelectorView: View {
 				SystemDetailView(impl: device.impl)
 					.padding(0)
 					.ignoresSafeArea(edges: Edge.Set.all.subtracting(.top))
-					//.navigationTitle(device.impl?.name ?? "")
+					.navigationTitle(device.impl.name)
 					.onAppear() {
-						Task { await device.impl?.connect() }
+						device.impl.connect()
 					}
 					.onDisappear() {
-						Task { await device.impl?.disconnect() }
+						device.impl.disconnect()
 					}
 			}
 		}

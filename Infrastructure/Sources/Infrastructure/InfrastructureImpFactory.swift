@@ -12,25 +12,27 @@ public enum InfrastructureCategory {
 	case transportation
 }
 
+@MainActor
 public protocol InfrastructureImpl {
-	var category: InfrastructureCategory { get async }
-	var name: String { get async }
-	var image: Image { get async }
+	var category: InfrastructureCategory { get }
+	var name: String { get }
+	var image: Image { get }
 
-	func connect() async
+	func connect()
 
-	func disconnect() async
+	func disconnect()
 }
 
+@MainActor
 public struct Unsupported: InfrastructureImpl {
 	public let id = UUID()
 	public let name: String
 	public let category: Infrastructure.InfrastructureCategory = .transportation
 	public let image: Image = Image(systemName: "questionmark.diamond")
 
-	public func connect() async {}
+	public func connect() {}
 
-	public func disconnect() async {}
+	public func disconnect() {}
 
 	public func hash(into hasher: inout Hasher) {
 		id.hash(into: &hasher)
@@ -39,9 +41,9 @@ public struct Unsupported: InfrastructureImpl {
 
 public struct InfrastructureEntry: Identifiable, Hashable {
 	public let id: UUID
-	public let impl: (any InfrastructureImpl)?
+	public let impl: any InfrastructureImpl
 
-	public init(_ id: UUID, _ impl: (any InfrastructureImpl)?) {
+	public init(_ id: UUID, _ impl: any InfrastructureImpl) {
 		self.id = id
 		self.impl = impl
 	}
@@ -62,23 +64,20 @@ public class InfrastructureImpFactory {
 	}
 
 	@MainActor
-	public func implementation(for device: BTDevice?) -> (any InfrastructureImpl)? {
-		if let device {
-			if let existing = impls[device.id] {
-				return existing
-			}
-			if device.service == JoveMetroLine.Service {
-				let impl = JoveMetroLine(device: device)
-				impls[device.id] = impl
-				return impl
-			}
-			if device.service == TheJoveExpress.Service {
-				let impl = TheJoveExpress(device: device)
-				impls[device.id] = impl
-				return impl
-			}
-			return Unsupported(name: device.name)
+	public func implementation(for device: BTDevice) -> any InfrastructureImpl {
+		if let existing = impls[device.id] {
+			return existing
 		}
-		return nil
+		if device.service == JoveMetroLine.Service {
+			let impl = JoveMetroLine(device: device)
+			impls[device.id] = impl
+			return impl
+		}
+		if device.service == TheJoveExpress.Service {
+			let impl = TheJoveExpress(device: device)
+			impls[device.id] = impl
+			return impl
+		}
+		return Unsupported(name: device.name)
 	}
 }
