@@ -23,10 +23,9 @@ struct ScrubView: View {
 	var thumbColor: Color = .gray
 	var minTrackColor: Color = .red
 	var maxTrackColor: Color = .green
-	//var textColor: Color = .black
 
     //@FocusState private var focused: Bool
-    //@Environment (\.isFocused) var isFocused: Bool
+    @Environment (\.isFocused) var isFocused: Bool
 
     @State var dragging: Bool = false
 
@@ -68,8 +67,6 @@ struct ScrubView: View {
 							.border(thumbColor, width: 0.5)
 					}
 				}
-//				#if os(tvOS)
-//				#else
 #if os(iOS) || os(watchOS)
 				.onTapGesture { location in
 					let normPos = (location.x - minPos) / posLength
@@ -77,28 +74,12 @@ struct ScrubView: View {
 					self.value = range.clamp(value)
 				}
 #endif
-//				#endif
-/*
-				Text(label)
-					.foregroundColor(textColor)
-					.offset(x: {
-						var po = sliderPos * 0.5
-						if valueSide {
-							po -= width * 0.5
-						}
-						return po
-					}())
-					.opacity(dragging ? 0.3 : 1.0)
-					.frame(height: thumbWidth * 0.5)
-*/
 				HStack {
 					RoundedRectangle(cornerRadius: thumbWidth * 0.5)
 						.frame(width: thumbWidth)
 						.foregroundColor(thumbColor)
 						.offset(x: sliderPos - thumbWidth * 0.5)
-						//.shadow(radius: focused ? 0.0 : thumbWidth * 0.5)
-//					#if os(tvOS)
-//					#else
+						.shadow(radius: isFocused ? 0.0 : thumbWidth * 0.5)
 #if os(iOS) || os(watchOS)
 					.gesture(DragGesture(minimumDistance: 0)
 						.onChanged { drag in
@@ -110,11 +91,13 @@ struct ScrubView: View {
 							dragging = false
 						}))
 #endif
-//					#endif
 					Spacer()
 				}
 			}
-		}//.focused($focused)
+		}
+#if os(tvOS)
+		.focusable()
+#endif
 	}
 }
 

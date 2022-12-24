@@ -12,17 +12,19 @@ import Infrastructure
 struct EngineView: View {
 	@ObservedObject var calibration: BTSubject<EngineRational>
 	@ObservedObject var power: BTSubject<EngineRational>
-	@State var gaugeState: GaugeView.State
+	@State var gaugeState: Gauge.GState
 	
 	init(_ engine: Engine) {
 		self._calibration = ObservedObject(initialValue: engine.calibration)
 		self._power = ObservedObject(initialValue: engine.power)
-		_gaugeState = State(initialValue: GaugeView.State.rail())
+		_gaugeState = State(initialValue: Gauge.GState.rail())
 	}
 	
     var body: some View {
 		VStack(alignment: .center, spacing: 12) {
-			GaugeView(state: gaugeState)
+		Gauge.GView(state: gaugeState) { geom, state in
+			Gauge.standard(geom: geom, state: state)
+		}
 			/*
 				.onChange(of: rail.power) { newValue in
 					gaugeValues.value = newValue.ratio * 100.0
