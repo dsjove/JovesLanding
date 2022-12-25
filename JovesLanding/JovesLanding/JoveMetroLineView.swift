@@ -7,6 +7,7 @@
 
 import SwiftUI
 import Infrastructure
+import BTByJove
 
 struct JoveMetroLineView: View {
 	@ObservedObject var rail: JoveMetroLine
@@ -144,5 +145,15 @@ struct JoveMetroLineControlsView: View {
 						.frame(height: 44)
 			}
 		}
+	}
+}
+
+struct JoveMetroLineView_Previews: PreviewProvider {
+	static var previews: some View {
+		JoveMetroLineView(
+			rail: JoveMetroLine(device:
+				BTDevice(name: "Sample", deviceID: UUID(), service: JoveMetroLine.Service, makeConnection: { _ in
+
+		})))
 	}
 }

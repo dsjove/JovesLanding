@@ -223,7 +223,7 @@ extension Gauge {
 			radius: Double = 0.200,
 			width: Double = 0.185,
 			@ViewBuilder indicators: (Geometry, GState, Double)->some View = {_, _, _ in EmptyView()}) -> some View {
-		MyRadialLayout(radius: radius) {
+		IndicatorLayout(radius: radius) {
 			indicators(geom, state, width)
 		}
 	}
