@@ -14,20 +14,20 @@ struct LightsView: View {
 	@ObservedObject var power: BTSubject<LightCommand>
 	@ObservedObject var state: BTSubject<Bool>
 	@ObservedObject var sensed: BTSubject<LightsRational>
-	@State var gaugeSate: Gauge.GState
+	@State var gaugeModel: Gauge.Model
 
 	init(_ lights: Lights) {
 		self._calibration = ObservedObject(initialValue: lights.calibration)
 		self._power = ObservedObject(initialValue: lights.power)
 		self._state = ObservedObject(initialValue: lights.state)
 		self._sensed = ObservedObject(initialValue: lights.ambient)
-		_gaugeSate = State(initialValue:  Gauge.GState.lights())
+		_gaugeModel = State(initialValue:  Gauge.Model.lights())
 	}
 	
     var body: some View {
         VStack(alignment: .center, spacing: 12) {
-		Gauge.GView(state: gaugeSate) { geom, state in
-			Gauge.standard(geom: geom, state: state)
+		Gauge.Container(model: gaugeModel) { geom, state in
+			Gauge.standard(geom: geom, model: gaugeModel)
 		}
 			/*
 				.onChange(of: rail.power) { newValue in

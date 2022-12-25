@@ -42,35 +42,35 @@ struct IndicatorView: View {
 	}
 }
 
-extension Gauge.GState {
-	static func rail() -> Gauge.GState {
-		var state = Gauge.GState()
+extension Gauge.Model {
+	static func rail() -> Gauge.Model {
+		var state = Gauge.Model()
 		state.values = [0]
 		state.minMax = -100...100
 		state.angles = 210...510
 		state.ranges = [
-			Gauge.GRange(values: 0 ... 0, color: Color("Motor/Idle"), label: "Idle"),
-			Gauge.GRange(values: -100 ... 0, color: Color("Motor/Reverse"), label: "Reverse"),
-			Gauge.GRange(values: 0 ... 100, color: Color("Motor/Forward"), label: "Forward"),
+			Gauge.Range(values: 0 ... 0, color: Color("Motor/Idle"), label: "Idle"),
+			Gauge.Range(values: -100 ... 0, color: Color("Motor/Reverse"), label: "Reverse"),
+			Gauge.Range(values: 0 ... 100, color: Color("Motor/Forward"), label: "Forward"),
 		]
 		state.ticks = [
-			Gauge.GTick(increment: 5, thickness: 0.008, transform: { _ in nil }, draw:  { i, v, _ in
+			Gauge.Tick(increment: 5, thickness: 0.008, transform: { _ in nil }, draw:  { i, v, _ in
 				((i + 5) % 5) != 0
 			}),
-			Gauge.GTick(increment: 25, innerRadius: 0.820, transform: { _ in nil }),
-			Gauge.GTick(increment: 25, outerRadius: 0.820, innerRadius: 0.680, thickness: 0.000),
+			Gauge.Tick(increment: 25, innerRadius: 0.820, transform: { _ in nil }),
+			Gauge.Tick(increment: 25, outerRadius: 0.820, innerRadius: 0.680, thickness: 0.000),
 		]
 		return state
 	}
 
-	static func lights() -> Gauge.GState {
-		var state = Gauge.GState()
+	static func lights() -> Gauge.Model {
+		var state = Gauge.Model()
 		state.values = [0]
 		state.minMax = 0...256
 		state.angles = 210...510
 		state.ranges = [
-			Gauge.GRange(values: -100 ... 0, color: Color("Lights/Off"), label: "Dark"),
-			Gauge.GRange(values: 0 ... 0, color: Color("Lighst/On"), label: "Light"),
+			Gauge.Range(values: -100 ... 0, color: Color("Lights/Off"), label: "Dark"),
+			Gauge.Range(values: 0 ... 0, color: Color("Lighst/On"), label: "Light"),
 		]
 		return state
 	}

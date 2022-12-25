@@ -9,31 +9,18 @@
 import SwiftUI
 
 public enum Gauge {
-	struct GState {
-		var values: [Double] = [0.0]
-		var minMax: ClosedRange<Double> = 0...0
-		var angles: ClosedRange<Double> = 0...360
+	struct Container<Content: View>: View {
+		let model: Model
+		@ViewBuilder var content: (Geometry, Model) -> Content
 
-		var ranges: [Gauge.GRange] = []
-		var ticks: [Gauge.GTick] = []
-		var needles: [Int: Gauge.GNeedle] = [0:Gauge.GNeedle()]
-
-		func enumerated(inc: Double) -> [(Int, Double)] {
-			var ds: [(Int, Double)] = [];
-			var v = minMax.lowerBound
-			var i = 0
-			while v <= minMax.upperBound {
-				ds.append((i, v))
-				v += inc
-				i += 1
+		var body: some View {
+			GeometryReader { geometry in
+			let geom = Geometry(geometry)
+				ZStack {
+					Color.clear
+					content(geom, model)
+				}
 			}
-			return ds
-		}
-
-		func angle(_ value: Double, _ offset: Double = 0.0) -> Angle {
-			let scale = value / (minMax.upperBound - minMax.lowerBound)
-			let angle = scale * (angles.upperBound - angles.lowerBound)
-			return .degrees(angle + offset)
 		}
 	}
 
@@ -64,103 +51,69 @@ public enum Gauge {
 			diameter * unit
 		}
 	}
-
-	struct GView<Content: View>: View {
-		let state: GState
-		@ViewBuilder var content: (Geometry, GState) -> Content
-
-		var body: some View {
-			GeometryReader { geometry in
-			let geom = Geometry(geometry)
-				ZStack {
-					Color.clear
-					content(geom, state)
-				}
-			}
-		}
-	}
-
-	@ViewBuilder
-	static func standard(
-			geom: Geometry,
-			state: GState,
-			@ViewBuilder indicators: (Geometry, GState, Double)->some View = {_, _, _ in EmptyView()}) -> some View {
-		Gauge.background(geom: geom, state: state)
-		Gauge.ticks(geom: geom, state: state)
-		Gauge.indicators(geom: geom, state: state, indicators: indicators)
-		Gauge.ranges(geom: geom, state: state)
-		Gauge.needles(geom: geom, state: state)
-		Gauge.screw(geom: geom, state: state)
-		Gauge.rim(geom: geom, state: state)
-	}
-
-	struct Clock: View {
-		@State var gaugeState: GState = {
-			var state = GState()
-			state.minMax = 0...43200
-			state.values = [10000, 20000, 30000]
-			state.ranges = [
-				GRange(values:10000.0...20000.0, color: Color(0.098, 0.098, 0.439)),
-				GRange(values:20000.0...30000.0, color: Color(0.098, 0.098, 0.439)),
-				GRange(values:30000.0...40000.0, color: Color(1.0, 0.858, 0.0))
-			]
-			return state
-		}()
-
-		var seconds: Double {
-			get {
-				gaugeState.values[0]
-			}
-			set {
-				gaugeState.values[1] = 43200 / (60 * newValue)
-				gaugeState.values[2] = 43200 / (60 * 60 * newValue)
-			}
-		}
-
-		var body: some View {
-			GView(state: gaugeState) { geom, state in
-				Gauge.background(geom: geom, state: state)
-				Gauge.ticks(geom: geom, state: state)
-				//Gauge.indicators(geom: geom, state: state, indicators: indicators)
-				Gauge.ranges(geom: geom, state: state)
-				Gauge.needles(geom: geom, state: state)
-				Gauge.screw(geom: geom, state: state)
-				Gauge.rim(geom: geom, state: state)
-			}
-		}
-	}
 }
 
 extension Gauge {
-	struct GRange {
+	struct Model {
+		var values: [Double] = [0.0]
+		var minMax: ClosedRange<Double> = 0...0
+		var angles: ClosedRange<Double> = 0...360
+
+		var ranges: [Gauge.Range] = []
+		var ticks: [Gauge.Tick] = []
+		var needles: [Int: Gauge.Needle] = [0:Gauge.Needle()]
+
+		func enumerated(inc: Double) -> [(Int, Double)] {
+			var ds: [(Int, Double)] = [];
+			var v = minMax.lowerBound
+			var i = 0
+			while v <= minMax.upperBound {
+				ds.append((i, v))
+				v += inc
+				i += 1
+			}
+			return ds
+		}
+
+		func angle(_ value: Double, _ offset: Double = 0.0) -> Angle {
+			let scale = value / (minMax.upperBound - minMax.lowerBound)
+			let angle = scale * (angles.upperBound - angles.lowerBound)
+			return .degrees(angle + offset)
+		}
+	}
+
+	struct Range {
 		var values: ClosedRange<Double> = 0...0
 		var color: Color =  Color.white
 		var textColor: Color = Color("Gauge/RangeText")
 		var label: String = ""
 	}
 
-	struct GTick {
+	struct Tick {
 		var increment: Double = 1.0
 		var outerRadius: Double = 0.900
 		var innerRadius: Double = 0.870
+		var textRadius: Double = 0.820
 		var thickness: Double = 0.004
 		var color: Color = Color("Gauge/Tick")
 		var transform: (Double)->String? = {Int($0).description}
 		var draw: (Int, Double, ClosedRange<Double>)->Bool = { _, _, _ in true }
 	}
 
-	struct GNeedle {
+	struct Needle {
 		var idx: Int = 0
 		var radius: Double = 0.660
 		var width: Double = 0.055
 		var color1: Color = Color("Gauge/Needle1")
 		var color2: Color = Color("Gauge/Needle2")
 	}
+}
 
+extension Gauge {
 	@ViewBuilder
 	static func background(
 			geom: Geometry,
-			state: GState) -> some View {
+			model: Model) -> some View {
 		Circle()
 			.fill(.radialGradient(
 				stops: [
@@ -188,7 +141,7 @@ extension Gauge {
 	@ViewBuilder
 	static func rim(
 			geom: Geometry,
-			state: GState,
+			model: Model,
 			outerRadius: Double = 0.995,
 			innerRadius: Double = 0.990,
 			color: Color = Color("Gauge/Rim")) -> some View {
@@ -203,7 +156,7 @@ extension Gauge {
 	@ViewBuilder
 	static func screw(
 			geom: Geometry,
-			state: GState,
+			model: Model,
 			outerRadius: Double = 0.120,
 			outerColor: Color = Color("Gauge/ScrewOuter"),
 			innerRadius: Double = 0.060,
@@ -219,24 +172,24 @@ extension Gauge {
 	@ViewBuilder
 	static func indicators(
 			geom: Geometry,
-			state: GState,
+			model: Model,
 			radius: Double = 0.200,
 			width: Double = 0.185,
-			@ViewBuilder indicators: (Geometry, GState, Double)->some View = {_, _, _ in EmptyView()}) -> some View {
+			@ViewBuilder indicators: (Geometry, Model, Double)->some View = {_, _, _ in EmptyView()}) -> some View {
 		IndicatorLayout(radius: radius) {
-			indicators(geom, state, width)
+			indicators(geom, model, width)
 		}
 	}
 
 	@ViewBuilder
 	static func needles(
 			geom: Geometry,
-			state: GState,
-			@ViewBuilder needle: @escaping (Geometry, GState, GNeedle)->some View = Gauge.needle) -> some View {
-		ForEach(Array(state.values.enumerated()), id: \.offset) {
-			if let n = state.needles[$0.offset] {
-				needle(geom, state, n)
-				.rotationEffect(state.angle($0.element))
+			model: Model,
+			@ViewBuilder needle: @escaping (Geometry, Model, Needle)->some View = Gauge.needle) -> some View {
+		ForEach(Array(model.values.enumerated()), id: \.offset) {
+			if let n = model.needles[$0.offset] {
+				needle(geom, model, n)
+				.rotationEffect(model.angle($0.element))
 			}
 		}
 	}
@@ -244,8 +197,8 @@ extension Gauge {
 	@ViewBuilder
 	static func needle(
 			geom: Geometry,
-			state: GState,
-			needle: GNeedle) -> some View {
+			model: Model,
+			needle: Needle) -> some View {
 		let actualRadius = geom.radius(needle.radius)
 		let actualWidth = geom.width(needle.width)
 		Path { path in
@@ -266,22 +219,22 @@ extension Gauge {
 	@ViewBuilder
 	static func ranges(
 			geom: Geometry,
-			state: GState,
+			model: Model,
 			outerRadius: Double = 0.989,
 			innerRadius: Double = 0.900,
-			@ViewBuilder range: @escaping (Geometry, GState, Double, Double, GRange)->some View = Gauge.range) -> some View {
-		ForEach(Array(state.ranges.enumerated()), id: \.self.offset) {
-			range(geom, state, outerRadius, innerRadius, $0.element)
+			@ViewBuilder range: @escaping (Geometry, Model, Double, Double, Range)->some View = Gauge.range) -> some View {
+		ForEach(Array(model.ranges.enumerated()), id: \.self.offset) {
+			range(geom, model, outerRadius, innerRadius, $0.element)
 		}
 	}
 
 	@ViewBuilder
 	static func range(
 			geom: Geometry,
-			state: GState,
+			model: Model,
 			outerRadius: Double = 0.989,
 			innerRadius: Double = 0.900,
-			range: GRange) -> some View {
+			range: Range) -> some View {
 		if range.values.lowerBound == range.values.upperBound {
 			EmptyView()
 		}
@@ -289,8 +242,8 @@ extension Gauge {
 			let radius = geom.radius(outerRadius)
 			let lineWidth = radius - geom.radius(innerRadius)
 
-			let angle1 = state.angle(Double(range.values.lowerBound), -90)
-			let angle2 = state.angle(Double(range.values.upperBound), -90)
+			let angle1 = model.angle(Double(range.values.lowerBound), -90)
+			let angle2 = model.angle(Double(range.values.upperBound), -90)
 			Path { path in
 				path.addArc(
 					center: geom.center,
@@ -300,7 +253,7 @@ extension Gauge {
 					clockwise: false)
 			}
 			.stroke(range.color, lineWidth: lineWidth)
-			let angle3 = state.angle(Double(range.values.lowerBound)) + (angle2 - angle1) / 2.0
+			let angle3 = model.angle(Double(range.values.lowerBound)) + (angle2 - angle1) / 2.0
 			CircleTextView(
 				text: range.label,
 				angle: angle3, tooFar: angle2 - angle1)
@@ -313,12 +266,12 @@ extension Gauge {
 	@ViewBuilder
 	static func ticks(
 			geom: Geometry,
-			state: GState,
-			@ViewBuilder tick: @escaping (Geometry, GState, GTick, Double)->some View = Gauge.tick) -> some View {
-		ForEach(Array(state.ticks.enumerated()), id: \.offset) { (e, t) in
-			ForEach(state.enumerated(inc: t.increment), id: \.0) { (i, v) in
-				if t.draw(i, v, state.minMax) {
-					tick(geom, state, t, v)
+			model: Model,
+			@ViewBuilder tick: @escaping (Geometry, Model, Tick, Double)->some View = Gauge.tick) -> some View {
+		ForEach(Array(model.ticks.enumerated()), id: \.offset) { (e, t) in
+			ForEach(model.enumerated(inc: t.increment), id: \.0) { (i, v) in
+				if t.draw(i, v, model.minMax) {
+					tick(geom, model, t, v)
 				}
 			}
 		}
@@ -327,12 +280,12 @@ extension Gauge {
 	@ViewBuilder
 	static func tick(
 			geom: Geometry,
-			state: GState,
-			tick: GTick,
+			model: Model,
+			tick: Tick,
 			value: Double) -> some View {
 		let outer = geom.radius(tick.outerRadius)
 		let inner = geom.radius(tick.innerRadius)
-		let angle = state.angle(value)
+		let angle = model.angle(value)
 
 		let lineWidth = geom.width(tick.thickness)
 		if lineWidth > 0 {
@@ -360,6 +313,58 @@ extension Gauge {
 private extension Color {
 	init(_ r: Double, _ g: Double, _ b: Double, _ o: Double = 1.0) {
 		self = Color( red: r, green: g, blue: b).opacity(o)
+	}
+}
+
+extension Gauge {
+	@ViewBuilder
+	static func standard(
+			geom: Geometry,
+			model: Model,
+			@ViewBuilder indicators: (Geometry, Model, Double)->some View = {_, _, _ in EmptyView()}) -> some View {
+		Gauge.background(geom: geom, model: model)
+		Gauge.ticks(geom: geom, model: model)
+		Gauge.indicators(geom: geom, model: model, indicators: indicators)
+		Gauge.ranges(geom: geom, model: model)
+		Gauge.needles(geom: geom, model: model)
+		Gauge.screw(geom: geom, model: model)
+		Gauge.rim(geom: geom, model: model)
+	}
+
+	struct Clock: View {
+		@State var model: Model = {
+			var model = Model()
+			model.minMax = 0...43200
+			model.values = [10000, 20000, 30000]
+			model.ranges = [
+				Range(values:10000.0...20000.0, color: Color(0.098, 0.098, 0.439)),
+				Range(values:20000.0...30000.0, color: Color(0.098, 0.098, 0.439)),
+				Range(values:30000.0...40000.0, color: Color(1.0, 0.858, 0.0))
+			]
+			return model
+		}()
+
+		var seconds: Double {
+			get {
+				model.values[0]
+			}
+			set {
+				model.values[1] = 43200 / (60 * newValue)
+				model.values[2] = 43200 / (60 * 60 * newValue)
+			}
+		}
+
+		var body: some View {
+			Container(model: model) { geom, model in
+				Gauge.background(geom: geom, model: model)
+				Gauge.ticks(geom: geom, model: model)
+				//Gauge.indicators(geom: geom, model: model, indicators: indicators)
+				Gauge.ranges(geom: geom, model: model)
+				Gauge.needles(geom: geom, model: model)
+				Gauge.screw(geom: geom, model: model)
+				Gauge.rim(geom: geom, model: model)
+			}
+		}
 	}
 }
 

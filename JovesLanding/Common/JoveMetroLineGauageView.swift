@@ -10,19 +10,19 @@ import Infrastructure
 
 struct JoveMetroLineGauageView : View {
 	@ObservedObject var rail: JoveMetroLine
-	@State var gaugeState: Gauge.GState
+	@State var gaugeModel: Gauge.Model
 	@State var indicators: Indicators
 
     init(rail: JoveMetroLine) {
 		self.rail = rail
-		_gaugeState = State(initialValue: {
-			var state = Gauge.GState.rail()
-			state.values[0] = rail.power * 100.0
+		_gaugeModel = State(initialValue: {
+			var model = Gauge.Model.rail()
+			model.values[0] = rail.power * 100.0
 			let c = rail.calibration * 100.0
-			state.ranges[0].values = -c ... c
-			state.ranges[1].values = -100 ... -c
-			state.ranges[2].values = c ... 100
-			return state
+			model.ranges[0].values = -c ... c
+			model.ranges[1].values = -100 ... -c
+			model.ranges[2].values = c ... 100
+			return model
 		}())
 		_indicators = State(initialValue: {
 			var indicators = Indicators(image: rail.image)
@@ -35,19 +35,19 @@ struct JoveMetroLineGauageView : View {
 	}
 	
 	var body: some View {
-		Gauge.GView(state: gaugeState) { geom, state in
-			Gauge.standard(geom: geom, state: state, indicators: { _, _, w in
+		Gauge.Container(model: gaugeModel) { geom, model in
+			Gauge.standard(geom: geom, model: model, indicators: { _, _, w in
 				IndicatorView(geom: geom, indicators: indicators, width: w)
 			})
 		}
 		.onChange(of: rail.power) { newValue in
-			gaugeState.values[0] = newValue * 100.0
+			gaugeModel.values[0] = newValue * 100.0
 		}
 		.onChange(of: rail.calibration) { newValue in
 			let c = newValue * 100.0
-			gaugeState.ranges[0].values = -c ... c
-			gaugeState.ranges[1].values = -100 ... -c
-			gaugeState.ranges[2].values = c ... 100
+			gaugeModel.ranges[0].values = -c ... c
+			gaugeModel.ranges[1].values = -100 ... -c
+			gaugeModel.ranges[2].values = c ... 100
 		}
 		.onChange(of: rail.motorState) { newValue in
 			indicators.motorState = newValue

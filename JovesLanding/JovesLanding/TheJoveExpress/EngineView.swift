@@ -12,18 +12,18 @@ import Infrastructure
 struct EngineView: View {
 	@ObservedObject var calibration: BTSubject<EngineRational>
 	@ObservedObject var power: BTSubject<EngineRational>
-	@State var gaugeState: Gauge.GState
+	@State var gaugeModel: Gauge.Model
 	
 	init(_ engine: Engine) {
 		self._calibration = ObservedObject(initialValue: engine.calibration)
 		self._power = ObservedObject(initialValue: engine.power)
-		_gaugeState = State(initialValue: Gauge.GState.rail())
+		_gaugeModel = State(initialValue: Gauge.Model.rail())
 	}
 	
     var body: some View {
 		VStack(alignment: .center, spacing: 12) {
-		Gauge.GView(state: gaugeState) { geom, state in
-			Gauge.standard(geom: geom, state: state)
+		Gauge.Container(model: gaugeModel) { geom, model in
+			Gauge.standard(geom: geom, model: model)
 		}
 			/*
 				.onChange(of: rail.power) { newValue in
