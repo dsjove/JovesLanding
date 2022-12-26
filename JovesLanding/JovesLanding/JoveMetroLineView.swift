@@ -19,23 +19,24 @@ struct JoveMetroLineView: View {
 	}
 
 	var body: some View {
-		ZStack {
-			Image("Metal")
-				.resizable()
-				.ignoresSafeArea()
-			ViewThatFits(in: [.horizontal]) {
-				VStack(alignment: .center, spacing: 24.0) {
-					JoveMetroLineGauageView(rail: rail)
-					JoveMetroLineControlsView(rail: rail)
-					Spacer()
-				}
-				HStack(alignment: .center, spacing: 24.0) {
-					JoveMetroLineGauageView(rail: rail)
-					JoveMetroLineControlsView(rail: rail)
-					Spacer()
-				}
+		GeometryReader { geom in
+			ZStack {
+				Image("Metal")
+					.resizable()
+					.ignoresSafeArea()
+				Group {
+					HStack(alignment: .center, spacing: 24.0) {
+						JoveMetroLineGauageView(rail: rail)
+						JoveMetroLineControlsView(rail: rail)
+						Spacer()
+					}.opacity(geom.size.width > geom.size.height ? 1.0 : 0.0)
+					VStack(alignment: .center, spacing: 24.0) {
+						JoveMetroLineGauageView(rail: rail)
+						JoveMetroLineControlsView(rail: rail)
+						Spacer()
+					}.opacity(geom.size.width <= geom.size.height ? 1.0 : 0.0)
+				}.padding(44)
 			}
-			.padding(44)
 		}
 		.toolbarBackground(Color.green.opacity(1.0), for: .navigationBar)
 		#if os(iOS) || os(watchOS)
