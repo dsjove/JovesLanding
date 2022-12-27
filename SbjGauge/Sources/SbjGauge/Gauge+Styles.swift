@@ -56,3 +56,9 @@ extension Gauge {
 		}
 	}
 }
+
+struct GaugeStyles_Previews: PreviewProvider {
+	static var previews: some View {
+		Gauge.Clock()
+	}
+}

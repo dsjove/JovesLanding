@@ -20,3 +20,18 @@ extension Gauge {
 		}
 	}
 }
+
+struct GaugeIndicators_Previews: PreviewProvider {
+	static var previews: some View {
+		Gauge.Container(model: Gauge.Model()) { geom, model in
+			Gauge.indicators(geom: geom, model: model) { _, _, _ in
+			Text("Hello")
+			Text("Hello")
+			Text("Hello")
+			Text("Hello")
+			Text("Hello")
+			Text("Hello")
+			}
+		}
+	}
+}

@@ -8,6 +8,7 @@
 
 import SwiftUI
 
+//TODO: make Model generic
 protocol GaugePart: View {
 	associatedtype Model
 }
@@ -60,9 +61,10 @@ public enum Gauge {
 extension Gauge {
 	struct Model {
 		var values: [Double] = [0.0]
-		var minMax: ClosedRange<Double> = 0...0
-		var angles: ClosedRange<Double> = 0...360
+		var minMax: ClosedRange<Double> = 0...10
+		var angles: ClosedRange<Angle> = .degrees(0) ... .degrees(360)
 
+		//TODO: cache this with users
 		func enumerated(inc: Double) -> [(Int, Double)] {
 			var ds: [(Int, Double)] = [];
 			var v = minMax.lowerBound
@@ -75,20 +77,14 @@ extension Gauge {
 			return ds
 		}
 
-		func angle(_ value: Double, _ offset: Double = 0.0) -> Angle {
+		func angle(_ value: Double, _ offset: Angle = Angle()) -> Angle {
 			let scale = value / (minMax.upperBound - minMax.lowerBound)
-			let angle = scale * (angles.upperBound - angles.lowerBound)
-			return .degrees(angle + offset)
+			let angle = scale * (angles.upperBound.degrees - angles.lowerBound.degrees)
+			return .degrees(angle) + offset
 		}
 
 		var ranges: [Gauge.Range] = []
-		var ticks: [Gauge.Tick] = []
+		var ticks: [Gauge.Tick] = [Gauge.Tick()]
 		var needles: [Int: Gauge.Needle] = [0:Gauge.Needle()]
-	}
-}
-
-struct Gauge_Previews: PreviewProvider {
-	static var previews: some View {
-		Gauge.Clock()
 	}
 }

@@ -12,15 +12,16 @@ extension Gauge {
 		var idx: Int = 0
 		var radius: Double = 0.660
 		var width: Double = 0.055
-		var color1: Color = Color("Gauge/Needle1")
-		var color2: Color = Color("Gauge/Needle2")
+		var color1: Color = Color("Gauge/Standard/Needle1")
+		var color2: Color = Color("Gauge/Standard/Needle2")
 	}
 
 	@ViewBuilder
 	static func needles(
 			geom: Geometry,
 			model: Model,
-			@ViewBuilder needle: @escaping (Geometry, Model, Needle)->some View = Gauge.needle) -> some View {
+			@ViewBuilder needle: @escaping (Geometry, Model, Needle)->some View = Gauge.needle,
+			@ViewBuilder screw: @escaping (Geometry, Model)->some View = Gauge.screw) -> some View {
 		ForEach(Array(model.values.enumerated()), id: \.offset) {
 			if let n = model.needles[$0.offset] {
 				needle(geom, model, n)
@@ -55,16 +56,24 @@ extension Gauge {
 	@ViewBuilder
 	static func screw(
 			geom: Geometry,
-			model: Model,
-			outerRadius: Double = 0.120,
-			outerColor: Color = Color("Gauge/ScrewOuter"),
-			innerRadius: Double = 0.060,
-			innerColor: Color = Color("Gauge/ScrewInner")) -> some View {
+			model: Model) -> some View {
+		let outerRadius: Double = 0.120
+		let outerColor: Color = Color("Gauge/Standard/ScrewOuter")
+		let innerRadius: Double = 0.060
+		let innerColor: Color = Color("Gauge/Standard/ScrewInner")
 		Circle()
 			.fill(outerColor)
 			.frame(width: geom.radius(outerRadius))
 		Circle()
 			.fill(innerColor)
 			.frame(width: geom.radius(innerRadius))
+	}
+}
+
+struct GaugeNeedles_Previews: PreviewProvider {
+	static var previews: some View {
+		Gauge.Container(model: Gauge.Model()) { geom, model in
+			Gauge.needles(geom: geom, model: model)
+		}
 	}
 }

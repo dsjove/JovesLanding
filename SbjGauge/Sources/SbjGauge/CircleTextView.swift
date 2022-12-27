@@ -8,23 +8,15 @@
 import Foundation
 import SwiftUI
 
-struct CircleText_Preview: PreviewProvider {
-	static var previews: some View {
-		CircleTextView(
-			text: "The quick brown fox jumps over the lazy dog.",
-			angle: .degrees(0),
-			alignment: 0.0)
-		.font(.title2)
-		.frame(width: 200, height: 300)
-		.border(Color.green, width: 5)
-	}
-}
-
 public struct CircleTextView: View {
 	var text: String
 	var angle: Angle = Angle()
 	var alignment: Double = 0.5
 	var tooFar: Angle = Angle(degrees: 360)
+	//TODO: option to center align first letter
+	//TODO: option to span letters across range of angles
+	//TODO: option for different baselines
+	var guides: Bool = false
 
 	@State private var textSizes: [Int:CGSize] = [:]
 
@@ -40,10 +32,10 @@ public struct CircleTextView: View {
 					VStack {
 						Text(String(element))
 							.background(Sizeable())
-							.onPreferenceChange(WidthPreferenceKey.self, perform: { size in
+							.onPreferenceChange(SizePreferenceKey.self, perform: { size in
 								self.textSizes[offset] = size
 							})
-						//.border(Color.green, width: 1)
+						.border(Color.green.opacity(guides ? 1.0 : 0.0), width: 1)
 						Spacer()
 					}
 					.frame(width: diameter, height: diameter)
@@ -53,7 +45,6 @@ public struct CircleTextView: View {
 			}
 			.rotationEffect(-fullAngle * self.alignment + self.angle)
 			.opacity(fullAngle <= tooFar ? 1.0 : tooFar.degrees / fullAngle.degrees)
-			//.border(Color.green, width: 1)
 		}
 	}
 
@@ -68,6 +59,7 @@ public struct CircleTextView: View {
 			height = mySize.height
 		}
 		else {
+			//TODO: height is almost what we want
 			height = textSizes.first!.value.height
 		}
 		let realRadius = radius - height
@@ -75,7 +67,7 @@ public struct CircleTextView: View {
 	}
 }
 
-private struct WidthPreferenceKey: PreferenceKey {
+private struct SizePreferenceKey: PreferenceKey {
 	typealias Value = CGSize
 	static var defaultValue = CGSize()
 	static func reduce(value: inout Value, nextValue: () -> Value) {
@@ -87,7 +79,33 @@ private struct Sizeable: View {
 	var body: some View {
 		GeometryReader { geometry in
 			Color.clear
-				.preference(key: WidthPreferenceKey.self, value: geometry.size)
+				.preference(key: SizePreferenceKey.self, value: geometry.size)
 		}
+	}
+}
+
+struct CircleText_Preview: PreviewProvider {
+	struct Preview: View {
+		let timer = Timer.publish(every: 0.5, on: .main, in: .common).autoconnect()
+		@State var angle =  Angle()
+
+		var body: some View {
+			CircleTextView(
+					text: "The quick brown fox jumps over the lazy dog.",
+					angle: angle,
+					alignment: 0.0,
+					guides: true)
+				.font(.title2)
+				.frame(width: 200, height: 300)
+				.border(Color.green, width: 3)
+				.animation(.linear(duration: 0.5), value: angle)
+				.onReceive(timer) { _ in
+					angle -= .degrees(10)
+				}
+		}
+	}
+
+	static var previews: some View {
+		Preview()
 	}
 }

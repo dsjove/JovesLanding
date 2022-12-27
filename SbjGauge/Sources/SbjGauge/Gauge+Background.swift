@@ -41,8 +41,8 @@ extension Gauge {
 			geom: Geometry,
 			model: Model,
 			outerRadius: Double = 0.995,
-			innerRadius: Double = 0.990,
-			color: Color = Color("Gauge/Rim")) -> some View {
+			innerRadius: Double = 0.988,
+			color: Color = Color("Gauge/Standard/Rim")) -> some View {
 
 		let radius = geom.radius(outerRadius)
 		let lineWidth = radius - geom.radius(innerRadius)
@@ -55,5 +55,14 @@ extension Gauge {
 private extension Color {
 	init(_ r: Double, _ g: Double, _ b: Double, _ o: Double = 1.0) {
 		self = Color( red: r, green: g, blue: b).opacity(o)
+	}
+}
+
+struct GaugeBackground_Previews: PreviewProvider {
+	static var previews: some View {
+		Gauge.Container(model: Gauge.Model()) { geom, model in
+			Gauge.background(geom: geom, model: model)
+			Gauge.foregound(geom: geom, model: model)
+		}
 	}
 }

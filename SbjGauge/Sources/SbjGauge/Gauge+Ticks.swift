@@ -13,7 +13,7 @@ extension Gauge {
 		var outerRadius: Double = 0.900
 		var innerRadius: Double = 0.870
 		var thickness: Double = 0.004
-		var color: Color = Color("Gauge/Tick")
+		var color: Color = Color("Gauge/Standard/Tick")
 		var transform: (Double)->String? = {Int($0).description}
 		var draw: (Int, Double, ClosedRange<Double>)->Bool = { _, _, _ in true }
 	}
@@ -62,5 +62,13 @@ extension Gauge {
 				.offset(y: -outer + height/2.0)
 				.rotationEffect(angle)
 		}
+	}
+}
+
+struct GaugeTicks_Previews: PreviewProvider {
+	static var previews: some View {
+		Gauge.Container(model: Gauge.Model()) { geom, model in
+			Gauge.ticks(geom: geom, model: model)
+		}.background(Color.green)
 	}
 }

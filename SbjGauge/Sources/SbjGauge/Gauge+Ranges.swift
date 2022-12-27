@@ -9,21 +9,21 @@ import SwiftUI
 
 extension Gauge {
 	struct Range {
-		var values: ClosedRange<Double> = 0...0
-		var color: Color =  Color.white
-		var textColor: Color = Color("Gauge/RangeText")
+		var values: ClosedRange<Double> = 0...5
+		var color: Color =  Color("Gauge/Standard/RangeBackground")
+		var textColor: Color = Color("Gauge/Standard/RangeText")
 		var label: String = ""
+		var outerRadius: Double = 0.989
+		var innerRadius: Double = 0.900
 	}
 
 	@ViewBuilder
 	static func ranges(
 			geom: Geometry,
 			model: Model,
-			outerRadius: Double = 0.989,
-			innerRadius: Double = 0.900,
-			@ViewBuilder range: @escaping (Geometry, Model, Double, Double, Range)->some View = Gauge.range) -> some View {
+			@ViewBuilder range: @escaping (Geometry, Model, Range)->some View = Gauge.range) -> some View {
 		ForEach(Array(model.ranges.enumerated()), id: \.self.offset) {
-			range(geom, model, outerRadius, innerRadius, $0.element)
+			range(geom, model, $0.element)
 		}
 	}
 
@@ -31,18 +31,16 @@ extension Gauge {
 	static func range(
 			geom: Geometry,
 			model: Model,
-			outerRadius: Double = 0.989,
-			innerRadius: Double = 0.900,
 			range: Range) -> some View {
 		if range.values.lowerBound == range.values.upperBound {
 			EmptyView()
 		}
 		else {
-			let radius = geom.radius(outerRadius)
-			let lineWidth = radius - geom.radius(innerRadius)
+			let radius = geom.radius(range.outerRadius)
+			let lineWidth = radius - geom.radius(range.innerRadius)
 
-			let angle1 = model.angle(Double(range.values.lowerBound), -90)
-			let angle2 = model.angle(Double(range.values.upperBound), -90)
+			let angle1 = model.angle(Double(range.values.lowerBound), .degrees(-90))
+			let angle2 = model.angle(Double(range.values.upperBound), .degrees(-90))
 			Path { path in
 				path.addArc(
 					center: geom.center,
@@ -59,6 +57,18 @@ extension Gauge {
 					.font(.system(size: lineWidth * 0.8))
 					.foregroundColor(range.textColor)
 					.frame(width: radius*2, height: radius * 2)
+		}
+	}
+}
+
+struct GaugeRanges_Previews: PreviewProvider {
+	static var previews: some View {
+		Gauge.Container(model: {
+			var model = Gauge.Model()
+			model.ranges = [Gauge.Range()]
+			return model
+		}()) { geom, model in
+			Gauge.ranges(geom: geom, model: model)
 		}
 	}
 }

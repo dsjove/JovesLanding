@@ -47,7 +47,7 @@ extension Gauge.Model {
 		var model = Gauge.Model()
 		model.values = [0]
 		model.minMax = -100...100
-		model.angles = 210...510
+		model.angles = .degrees(210) ... .degrees(510)
 		model.ranges = [
 			Gauge.Range(values: 0 ... 0, color: Color("Motor/Idle"), label: "Idle"),
 			Gauge.Range(values: -100 ... 0, color: Color("Motor/Reverse"), label: "Reverse"),
@@ -67,7 +67,7 @@ extension Gauge.Model {
 		var model = Gauge.Model()
 		model.values = [0]
 		model.minMax = 0...256
-		model.angles = 210...510
+		model.angles = .degrees(210) ... .degrees(510)
 		model.ranges = [
 			Gauge.Range(values: -100 ... 0, color: Color("Lights/Off"), label: "Dark"),
 			Gauge.Range(values: 0 ... 0, color: Color("Lighst/On"), label: "Light"),

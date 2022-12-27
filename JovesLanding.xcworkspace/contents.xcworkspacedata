@@ -5,6 +5,9 @@
       location = "container:"
       name = "Packages">
       <FileRef
+         location = "group:SbjGauge">
+      </FileRef>
+      <FileRef
          location = "group:BTByJove">
       </FileRef>
       <FileRef
