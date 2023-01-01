@@ -22,7 +22,7 @@ extension BTClient {
 		var base = [
 		//	TheJoveExpress.Service,
 			CircuiteCube.Service,
-		//	LegoPoweredUp.Service,
+			LegoPoweredUp.Service,
 		]
 		if (mocking) {
 			base.append(BTServiceIdentity(name: "Garbage", id: UUID()))

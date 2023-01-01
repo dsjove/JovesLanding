@@ -8,23 +8,24 @@
 import SwiftUI
 import BTByJove
 import Infrastructure
+import SbjGauge
 
 struct EngineView: View {
 	@ObservedObject var calibration: BTSubject<EngineRational>
 	@ObservedObject var power: BTSubject<EngineRational>
-	@State var gaugeModel: Gauge.Model
+	@State var gaugeModel: SbjGauge.Gauge.Model
 	
 	init(_ engine: Engine) {
 		self._calibration = ObservedObject(initialValue: engine.calibration)
 		self._power = ObservedObject(initialValue: engine.power)
-		_gaugeModel = State(initialValue: Gauge.Model.rail())
+		_gaugeModel = State(initialValue: SbjGauge.Gauge.Model.rail())
 	}
 	
     var body: some View {
 		VStack(alignment: .center, spacing: 12) {
-		Gauge.Container(model: gaugeModel) { geom, model in
-			Gauge.standard(geom: geom, model: model)
-		}
+			SbjGauge.Gauge.Container(gaugeModel) { geom, model in
+				SbjGauge.Gauge.standard(geom: geom, model: model)
+			}
 			/*
 				.onChange(of: rail.power) { newValue in
 					gaugeValues.value = newValue.ratio * 100.0

@@ -9,7 +9,7 @@ import SwiftUI
 
 extension Gauge {
 	@ViewBuilder
-	static func standard(
+	public static func standard(
 			geom: Geometry,
 			model: Model,
 			@ViewBuilder indicators: (Geometry, Model, Double)->some View = {_, _, _ in EmptyView()}) -> some View {
@@ -21,8 +21,8 @@ extension Gauge {
 		Gauge.foregound(geom: geom, model: model)
 	}
 
-	struct Clock: View {
-		@State var model: Model = {
+	public struct Clock: View {
+		@State private var model: Model = {
 			var model = Model()
 			model.minMax = 0...43200
 			model.values = [10000, 20000, 30000]
@@ -34,7 +34,7 @@ extension Gauge {
 			return model
 		}()
 
-		var seconds: Double {
+		public var seconds: Double {
 			get {
 				model.values[0]
 			}
@@ -44,8 +44,8 @@ extension Gauge {
 			}
 		}
 
-		var body: some View {
-			Container(model: model) { geom, model in
+		public var body: some View {
+			Container(model) { geom, model in
 				Gauge.background(geom: geom, model: model)
 				Gauge.ticks(geom: geom, model: model)
 				//Gauge.indicators(geom: geom, model: model, indicators: indicators)

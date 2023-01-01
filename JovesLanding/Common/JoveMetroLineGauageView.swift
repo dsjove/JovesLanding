@@ -7,10 +7,11 @@
 
 import SwiftUI
 import Infrastructure
+import SbjGauge
 
 struct JoveMetroLineGauageView : View {
 	@ObservedObject var rail: JoveMetroLine
-	@State var gaugeModel: Gauge.Model
+	@State var gaugeModel: SbjGauge.Gauge.Model
 	@State var indicators: Indicators
 
     init(rail: JoveMetroLine) {
@@ -35,7 +36,7 @@ struct JoveMetroLineGauageView : View {
 	}
 	
 	var body: some View {
-		Gauge.Container(model: gaugeModel) { geom, model in
+		Gauge.Container(gaugeModel) { geom, model in
 			Gauge.standard(geom: geom, model: model, indicators: { _, _, w in
 				IndicatorView(geom: geom, indicators: indicators, width: w)
 			})

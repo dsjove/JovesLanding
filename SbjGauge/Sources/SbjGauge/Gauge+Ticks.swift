@@ -7,19 +7,42 @@
 
 import SwiftUI
 
+public extension Color {
+    init(packaged: String) {
+		self = Color(UIColor(named: packaged, in: .module, compatibleWith: nil)!)
+    }
+}
+
 extension Gauge {
-	struct Tick {
-		var increment: Double = 1.0
-		var outerRadius: Double = 0.900
-		var innerRadius: Double = 0.870
-		var thickness: Double = 0.004
-		var color: Color = Color("Gauge/Standard/Tick")
-		var transform: (Double)->String? = {Int($0).description}
-		var draw: (Int, Double, ClosedRange<Double>)->Bool = { _, _, _ in true }
+	public struct Tick {
+		public init(
+			increment: Double = 1.0,
+			outerRadius: Double = 0.900,
+			innerRadius: Double = 0.870,
+			thickness: Double = 0.004,
+			color: Color = Color(packaged: "Gauge/Standard/Tick"),
+			transform: @escaping (Double) -> String? = {Int($0).description},
+			draw: @escaping (Int, Double, ClosedRange<Double>) -> Bool = { _, _, _ in true }) {
+			self.increment = increment
+			self.outerRadius = outerRadius
+			self.innerRadius = innerRadius
+			self.thickness = thickness
+			self.color = color
+			self.transform = transform
+			self.draw = draw
+		}
+
+		public var increment: Double = 1.0
+		public var outerRadius: Double = 0.900
+		public var innerRadius: Double = 0.870
+		public var thickness: Double = 0.004
+		public var color: Color = Color(packaged: "Gauge/Standard/Tick")
+		public var transform: (Double)->String? = {Int($0).description}
+		public var draw: (Int, Double, ClosedRange<Double>)->Bool = { _, _, _ in true }
 	}
 
 	@ViewBuilder
-	static func ticks(
+	public static func ticks(
 			geom: Geometry,
 			model: Model,
 			@ViewBuilder tick: @escaping (Geometry, Model, Tick, Double)->some View = Gauge.tick) -> some View {
@@ -33,7 +56,7 @@ extension Gauge {
 	}
 
 	@ViewBuilder
-	static func tick(
+	public static func tick(
 			geom: Geometry,
 			model: Model,
 			tick: Tick,
@@ -67,7 +90,7 @@ extension Gauge {
 
 struct GaugeTicks_Previews: PreviewProvider {
 	static var previews: some View {
-		Gauge.Container(model: Gauge.Model()) { geom, model in
+		Gauge.Container(Gauge.Model()) { geom, model in
 			Gauge.ticks(geom: geom, model: model)
 		}.background(Color.green)
 	}

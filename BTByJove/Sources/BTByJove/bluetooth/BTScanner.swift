@@ -105,6 +105,11 @@ extension BTScanner: CBCentralManagerDelegate {
 	}
 	
 	public func centralManager(_ central: CBCentralManager, didDiscover peripheral: CBPeripheral,advertisementData: [String : Any], rssi RSSI: NSNumber) {
+/*
+		let serviceIDs = advertisementData["kCBAdvDataServiceUUIDs"] as? [CBUUID]
+		let name = advertisementData["kCBAdvDataLocalName"] as? String
+		print("\(peripheral.identifier) \(serviceIDs) \(name ?? peripheral.name)")
+*/
 		self.delegate?.peripheralDiscovered(peripheral, advertisementData: advertisementData, rssi: RSSI)
 	}
 	

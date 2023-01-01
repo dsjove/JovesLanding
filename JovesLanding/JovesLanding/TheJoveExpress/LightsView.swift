@@ -8,25 +8,26 @@
 import SwiftUI
 import BTByJove
 import Infrastructure
+import SbjGauge
 
 struct LightsView: View {
 	@ObservedObject var calibration: BTSubject<LightsRational>
 	@ObservedObject var power: BTSubject<LightCommand>
 	@ObservedObject var state: BTSubject<Bool>
 	@ObservedObject var sensed: BTSubject<LightsRational>
-	@State var gaugeModel: Gauge.Model
+	@State var gaugeModel: SbjGauge.Gauge.Model
 
 	init(_ lights: Lights) {
 		self._calibration = ObservedObject(initialValue: lights.calibration)
 		self._power = ObservedObject(initialValue: lights.power)
 		self._state = ObservedObject(initialValue: lights.state)
 		self._sensed = ObservedObject(initialValue: lights.ambient)
-		_gaugeModel = State(initialValue:  Gauge.Model.lights())
+		_gaugeModel = State(initialValue:  SbjGauge.Gauge.Model.lights())
 	}
 	
     var body: some View {
         VStack(alignment: .center, spacing: 12) {
-		Gauge.Container(model: gaugeModel) { geom, state in
+			Gauge.Container(gaugeModel) { geom, state in
 			Gauge.standard(geom: geom, model: gaugeModel)
 		}
 			/*

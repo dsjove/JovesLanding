@@ -8,13 +8,28 @@
 import SwiftUI
 
 extension Gauge {
-	struct Range {
-		var values: ClosedRange<Double> = 0...5
-		var color: Color =  Color("Gauge/Standard/RangeBackground")
-		var textColor: Color = Color("Gauge/Standard/RangeText")
-		var label: String = ""
-		var outerRadius: Double = 0.989
-		var innerRadius: Double = 0.900
+	public struct Range {
+		public init(
+			values: ClosedRange<Double> = 0...5,
+			color: Color = Color(packaged: "Gauge/Standard/RangeBackground"),
+			textColor: Color = Color(packaged: "Gauge/Standard/RangeText"),
+			label: String = "",
+			outerRadius: Double = 0.989,
+			innerRadius: Double = 0.900) {
+			self.values = values
+			self.color = color
+			self.textColor = textColor
+			self.label = label
+			self.outerRadius = outerRadius
+			self.innerRadius = innerRadius
+		}
+
+		public var values: ClosedRange<Double> = 0...5
+		public var color: Color =  Color(packaged: "Gauge/Standard/RangeBackground")
+		public var textColor: Color = Color(packaged: "Gauge/Standard/RangeText")
+		public var label: String = ""
+		public var outerRadius: Double = 0.989
+		public var innerRadius: Double = 0.900
 	}
 
 	@ViewBuilder
@@ -63,7 +78,7 @@ extension Gauge {
 
 struct GaugeRanges_Previews: PreviewProvider {
 	static var previews: some View {
-		Gauge.Container(model: {
+		Gauge.Container({
 			var model = Gauge.Model()
 			model.ranges = [Gauge.Range()]
 			return model

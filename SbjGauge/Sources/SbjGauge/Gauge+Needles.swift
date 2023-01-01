@@ -8,16 +8,17 @@
 import SwiftUI
 
 extension Gauge {
-	struct Needle {
-		var idx: Int = 0
-		var radius: Double = 0.660
-		var width: Double = 0.055
-		var color1: Color = Color("Gauge/Standard/Needle1")
-		var color2: Color = Color("Gauge/Standard/Needle2")
+	public struct Needle {
+		public var idx: Int = 0
+		public var radius: Double = 0.660
+		public var width: Double = 0.055
+		public var color1: Color = Color(packaged: "Gauge/Standard/Needle1")
+		public var color2: Color = Color(packaged: "Gauge/Standard/Needle2")
+		public init() {}
 	}
 
 	@ViewBuilder
-	static func needles(
+	public static func needles(
 			geom: Geometry,
 			model: Model,
 			@ViewBuilder needle: @escaping (Geometry, Model, Needle)->some View = Gauge.needle,
@@ -32,7 +33,7 @@ extension Gauge {
 	}
 
 	@ViewBuilder
-	static func needle(
+	public static func needle(
 			geom: Geometry,
 			model: Model,
 			needle: Needle) -> some View {
@@ -54,13 +55,13 @@ extension Gauge {
 	}
 
 	@ViewBuilder
-	static func screw(
+	public static func screw(
 			geom: Geometry,
 			model: Model) -> some View {
 		let outerRadius: Double = 0.120
-		let outerColor: Color = Color("Gauge/Standard/ScrewOuter")
+		let outerColor: Color = Color(packaged: "Gauge/Standard/ScrewOuter")
 		let innerRadius: Double = 0.060
-		let innerColor: Color = Color("Gauge/Standard/ScrewInner")
+		let innerColor: Color = Color(packaged: "Gauge/Standard/ScrewInner")
 		Circle()
 			.fill(outerColor)
 			.frame(width: geom.radius(outerRadius))
@@ -72,7 +73,7 @@ extension Gauge {
 
 struct GaugeNeedles_Previews: PreviewProvider {
 	static var previews: some View {
-		Gauge.Container(model: Gauge.Model()) { geom, model in
+		Gauge.Container(Gauge.Model()) { geom, model in
 			Gauge.needles(geom: geom, model: model)
 		}
 	}

@@ -7,6 +7,7 @@
 
 import SwiftUI
 import Infrastructure
+import SbjGauge
 
 struct Indicators {
 	var image: Image
@@ -17,7 +18,7 @@ struct Indicators {
 }
 
 struct IndicatorView: View {
-	let geom: Gauge.Geometry
+	let geom: SbjGauge.Gauge.Geometry
 	var indicators: Indicators
 	let width: Double
 
@@ -42,9 +43,9 @@ struct IndicatorView: View {
 	}
 }
 
-extension Gauge.Model {
-	static func rail() -> Gauge.Model {
-		var model = Gauge.Model()
+extension SbjGauge.Gauge.Model {
+	static func rail() -> SbjGauge.Gauge.Model {
+		var model = SbjGauge.Gauge.Model()
 		model.values = [0]
 		model.minMax = -100...100
 		model.angles = .degrees(210) ... .degrees(510)
@@ -63,7 +64,7 @@ extension Gauge.Model {
 		return model
 	}
 
-	static func lights() -> Gauge.Model {
+	static func lights() -> SbjGauge.Gauge.Model {
 		var model = Gauge.Model()
 		model.values = [0]
 		model.minMax = 0...256

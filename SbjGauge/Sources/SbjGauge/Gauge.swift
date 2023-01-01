@@ -9,16 +9,21 @@
 import SwiftUI
 
 //TODO: make Model generic
-protocol GaugePart: View {
+public protocol GaugePart: View {
 	associatedtype Model
 }
 
 public enum Gauge {
-	struct Container<Content: View>: View {
-		let model: Model
-		@ViewBuilder var content: (Geometry, Model) -> Content
+	public struct Container<Content: View>: View {
+		public let model: Model
+		@ViewBuilder public var content: (Geometry, Model) -> Content
 
-		var body: some View {
+		public init(_ model: Model, @ViewBuilder _ content: @escaping (Geometry, Model) -> Content) {
+			self.model = model
+			self.content = content
+		}
+
+		public var body: some View {
 			GeometryReader { geometry in
 			let geom = Geometry(geometry)
 				ZStack {
@@ -29,43 +34,45 @@ public enum Gauge {
 		}
 	}
 
-	struct Geometry {
+	public struct Geometry {
 		private let width: Double
 		private let height: Double
 
-		init(_ geom: GeometryProxy) {
+		public init(_ geom: GeometryProxy) {
 			width = geom.size.width
 			height = geom.size.height
 		}
 
-		var diameter: Double { min(width, height) }
+		public var diameter: Double { min(width, height) }
 
-		var radius: Double { diameter / 2.0 }
+		public var radius: Double { diameter / 2.0 }
 
-		var center: CGPoint { CGPoint(x: width / 2.0, y: height / 2.0) }
+		public var center: CGPoint { CGPoint(x: width / 2.0, y: height / 2.0) }
 
-		func center(x: Double, y: Double) -> CGPoint {
+		public func center(x: Double, y: Double) -> CGPoint {
 			CGPoint(x: (width / 2.0) + x, y: (height / 2.0) + y)
 		}
 
-		func radius(_ unit: Double) -> Double {
+		public func radius(_ unit: Double) -> Double {
 			radius * unit
 		}
 
-		func width(_ unit: Double) -> Double {
+		public func width(_ unit: Double) -> Double {
 			diameter * unit
 		}
 	}
 }
 
 extension Gauge {
-	struct Model {
-		var values: [Double] = [0.0]
-		var minMax: ClosedRange<Double> = 0...10
-		var angles: ClosedRange<Angle> = .degrees(0) ... .degrees(360)
+	public struct Model {
+		public var values: [Double] = [0.0]
+		public var minMax: ClosedRange<Double> = 0...10
+		public var angles: ClosedRange<Angle> = .degrees(0) ... .degrees(360)
+
+		public init() {}
 
 		//TODO: cache this with users
-		func enumerated(inc: Double) -> [(Int, Double)] {
+		public func enumerated(inc: Double) -> [(Int, Double)] {
 			var ds: [(Int, Double)] = [];
 			var v = minMax.lowerBound
 			var i = 0
@@ -77,14 +84,14 @@ extension Gauge {
 			return ds
 		}
 
-		func angle(_ value: Double, _ offset: Angle = Angle()) -> Angle {
+		public func angle(_ value: Double, _ offset: Angle = Angle()) -> Angle {
 			let scale = value / (minMax.upperBound - minMax.lowerBound)
 			let angle = scale * (angles.upperBound.degrees - angles.lowerBound.degrees)
 			return .degrees(angle) + offset
 		}
 
-		var ranges: [Gauge.Range] = []
-		var ticks: [Gauge.Tick] = [Gauge.Tick()]
-		var needles: [Int: Gauge.Needle] = [0:Gauge.Needle()]
+		public var ranges: [Gauge.Range] = []
+		public var ticks: [Gauge.Tick] = [Gauge.Tick()]
+		public var needles: [Int: Gauge.Needle] = [0:Gauge.Needle()]
 	}
 }

@@ -9,14 +9,14 @@ import Foundation
 import SwiftUI
 
 public struct CircleTextView: View {
-	var text: String
-	var angle: Angle = Angle()
-	var alignment: Double = 0.5
-	var tooFar: Angle = Angle(degrees: 360)
+	public var text: String
+	public var angle: Angle = Angle()
+	public var alignment: Double = 0.5
+	public var tooFar: Angle = Angle(degrees: 360)
 	//TODO: option to center align first letter
 	//TODO: option to span letters across range of angles
 	//TODO: option for different baselines
-	var guides: Bool = false
+	public var guides: Bool = false
 
 	@State private var textSizes: [Int:CGSize] = [:]
 

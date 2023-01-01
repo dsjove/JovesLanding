@@ -10,5 +10,5 @@ import Foundation
 public class LegoPoweredUp {
 	public static let Service = BTServiceIdentity(
 		name: "LEGO PU",
-		id: "00001623-1212-EFDE-1623-785FEABCD123")
+		id: "9EF58B69-E191-4DAF-89D6-9E115258E626")
 }

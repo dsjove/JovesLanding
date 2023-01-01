@@ -9,7 +9,7 @@ import SwiftUI
 
 extension Gauge {
 	@ViewBuilder
-	static func background(
+	public static func background(
 			geom: Geometry,
 			model: Model) -> some View {
 		Circle()
@@ -37,12 +37,12 @@ extension Gauge {
 	}
 
 	@ViewBuilder
-	static func foregound(
+	public static func foregound(
 			geom: Geometry,
 			model: Model,
 			outerRadius: Double = 0.995,
 			innerRadius: Double = 0.988,
-			color: Color = Color("Gauge/Standard/Rim")) -> some View {
+			color: Color = Color(packaged: "Gauge/Standard/Rim")) -> some View {
 
 		let radius = geom.radius(outerRadius)
 		let lineWidth = radius - geom.radius(innerRadius)
@@ -60,7 +60,7 @@ private extension Color {
 
 struct GaugeBackground_Previews: PreviewProvider {
 	static var previews: some View {
-		Gauge.Container(model: Gauge.Model()) { geom, model in
+		Gauge.Container(Gauge.Model()) { geom, model in
 			Gauge.background(geom: geom, model: model)
 			Gauge.foregound(geom: geom, model: model)
 		}

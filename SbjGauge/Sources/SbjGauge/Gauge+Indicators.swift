@@ -9,7 +9,7 @@ import SwiftUI
 
 extension Gauge {
 	@ViewBuilder
-	static func indicators(
+	public static func indicators(
 			geom: Geometry,
 			model: Model,
 			radius: Double = 0.200,
@@ -23,7 +23,7 @@ extension Gauge {
 
 struct GaugeIndicators_Previews: PreviewProvider {
 	static var previews: some View {
-		Gauge.Container(model: Gauge.Model()) { geom, model in
+		Gauge.Container(Gauge.Model()) { geom, model in
 			Gauge.indicators(geom: geom, model: model) { _, _, _ in
 			Text("Hello")
 			Text("Hello")
