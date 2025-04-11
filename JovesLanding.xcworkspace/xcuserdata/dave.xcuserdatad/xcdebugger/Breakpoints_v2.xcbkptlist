@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Bucket
+   uuid = "8224537C-295B-4DB7-9E45-FBB74FA611E9"
+   type = "0"
+   version = "2.0">
+   <Breakpoints>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.SymbolicBreakpoint">
+         <BreakpointContent
+            uuid = "60E2E0C1-7903-412E-BDEE-E2DC46217930"
+            shouldBeEnabled = "Yes"
+            nameForDebugger = "Badpublish"
+            condition = "Thread.isMainThread"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            symbolName = "Combine.PublishOn.receive(on:options:)"
+            moduleName = "Combine">
+            <Locations>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+   </Breakpoints>
+</Bucket>
