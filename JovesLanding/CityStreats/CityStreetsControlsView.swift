@@ -81,8 +81,6 @@ struct CityStreetsControlsView: View {
 						}
 							.frame(height: 44)
 				}
-
-				Divider()
 				GridRow {
 					Text("Idle").font(.headline).lineLimit(2)
 					ScrubView(
@@ -110,7 +108,6 @@ struct CityStreetsControlsView: View {
 							.frame(height: 44)
 				}
 				if facility.lighting.hasSensor {
-					Divider()
 					GridRow {
 						Text("Auto\nLights").font(.headline).lineLimit(2)
 						ScrubView(

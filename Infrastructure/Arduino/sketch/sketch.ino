@@ -1,21 +1,29 @@
+#include "config.h"
+
 #include <ArduinoBLE.h>
 #include <TaskScheduler.h>
+#ifdef HAS_MATRIX
 #include <Arduino_LED_Matrix.h>
+#endif
+#ifdef SERVO_PIN
 #include <Servo.h>
+#endif
 //#include <EEPROM.h>
 
-#define LED_PIN 3
-#define SERVO_PIN 9
-#define LIGHT_SENSOR_PIN A0
-
-BLEService _cityStreetsService("00000000-4369-7479-2053-747265657473");
+BLEService _btService("00000000-4369-7479-2053-747265657473");
 Scheduler _runner;
 
 void setup() {
   system_setup();
+#ifdef HAS_MATRIX
   matrix_setup();
-  servo_setup();
+#endif
+#ifdef HAS_MOTOR
+  motor_setup();
+#endif
+#ifdef HAS_LIGHTING
   lighting_setup();
+#endif
   bluetooth_setup();
 }
 
@@ -37,6 +45,7 @@ void system_setup() {
   //}
 }
 
+#ifdef HAS_MATRIX
 ArduinoLEDMatrix _matrix;
 uint32_t _matrixCurrent[] = {0, 0, 0};
 
@@ -56,7 +65,7 @@ void matrix_setup() {
   matrix_set(heart);
   _matrixDisplayCharacteristic.writeValue(_matrixCurrent, sizeof(_matrixCurrent));
   _matrixDisplayCharacteristic.setEventHandler(BLEWritten, matrix_updateDisplay);
-  _cityStreetsService.addCharacteristic(_matrixDisplayCharacteristic);
+  _btService.addCharacteristic(_matrixDisplayCharacteristic);
 }
 
 void matrix_updateDisplay(BLEDevice device, BLECharacteristic characteristic) {
@@ -71,84 +80,92 @@ void matrix_set(const uint32_t request[3]) {
     _matrix.loadFrame(_matrixCurrent);
   }
 }
+#endif
 
-Servo _servo;
-const int8_t _servoPowerMin = -127;
-const int8_t _servoPowerStop = 0;
-const int8_t _servoPowerMax = 127;
-const int _servoSignalMin = 0;
-const int _servoSignalStop = 90;
-const int _servoSignalMax = 180;
-int8_t _servoPower = 0;
-uint8_t _servoCalibration = _servoPowerMax / 4;
-int _servoCurrentSignal = _servoSignalStop;
+#ifdef HAS_MOTOR
+#ifdef SERVO_PIN
+Servo _motor;
+#endif
+const int8_t _motorPowerMin = -127;
+const int8_t _motorPowerStop = 0;
+const int8_t _motorPowerMax = 127;
+const int _motorSignalMin = 0;
+const int _motorSignalStop = 90;
+const int _motorSignalMax = 180;
+int8_t _motorPower = 0;
+uint8_t _motorCalibration = _motorPowerMax / 4;
+int _motorCurrentSignal = _motorSignalStop;
 //const int _epromIdxServoCalibration = 1;
 
-BLECharacteristic _servoPowerControlCharacteristic(
+BLECharacteristic _motorPowerControlCharacteristic(
   "02020001-4369-7479-2053-747265657473", 
   BLEWriteWithoutResponse,
-  sizeof(_servoPower));
-BLECharacteristic _servoPowerFeedbackCharacteristic(
+  sizeof(_motorPower));
+BLECharacteristic _motorPowerFeedbackCharacteristic(
   "02020002-4369-7479-2053-747265657473", 
   BLERead | BLENotify, 
-  sizeof(_servoPower));
-BLECharacteristic _servoCalibrationCharacteristic(
+  sizeof(_motorPower));
+BLECharacteristic _motorCalibrationCharacteristic(
   "02010000-4369-7479-2053-747265657473", 
   BLERead | BLEWriteWithoutResponse| BLENotify, 
-  sizeof(_servoCalibration));
+  sizeof(_motorCalibration));
 
-void servo_setup() {
-  _servo.attach(SERVO_PIN);
-
+void motor_setup() {
+#ifdef SERVO_PIN
+  _motor.attach(SERVO_PIN);
+#endif
   //if (_firstRun) {
-    //EEPROM.write(_epromIdxServoCalibration, _servoCalibration);
+    //EEPROM.write(_epromIdxServoCalibration, _motorCalibration);
   //}
   //else {
-    //_servoCalibration = EEPROM.read(_epromIdxServoCalibration);
+    //_motorCalibration = EEPROM.read(_epromIdxServoCalibration);
   //}
 
-  _servoPowerControlCharacteristic.setEventHandler(BLEWritten, servo_updatePower);
-  _cityStreetsService.addCharacteristic(_servoPowerControlCharacteristic);
+  _motorPowerControlCharacteristic.setEventHandler(BLEWritten, motor_updatePower);
+  _btService.addCharacteristic(_motorPowerControlCharacteristic);
 
-  _servoPowerFeedbackCharacteristic.writeValue(_servoPower);
-  _cityStreetsService.addCharacteristic(_servoPowerFeedbackCharacteristic);
+  _motorPowerFeedbackCharacteristic.writeValue(_motorPower);
+  _btService.addCharacteristic(_motorPowerFeedbackCharacteristic);
 
-  _servoCalibrationCharacteristic.writeValue(_servoCalibration);
-  _servoCalibrationCharacteristic.setEventHandler(BLEWritten, servo_updateCalibration);
-  _cityStreetsService.addCharacteristic(_servoCalibrationCharacteristic);
+  _motorCalibrationCharacteristic.writeValue(_motorCalibration);
+  _motorCalibrationCharacteristic.setEventHandler(BLEWritten, motor_updateCalibration);
+  _btService.addCharacteristic(_motorCalibrationCharacteristic);
 }
 
-void servo_updatePower(BLEDevice central, BLECharacteristic characteristic) {
-  characteristic.readValue(_servoPower);
-  servo_update();
+void motor_updatePower(BLEDevice central, BLECharacteristic characteristic) {
+  characteristic.readValue(_motorPower);
+  motor_update();
 }
 
-void servo_updateCalibration(BLEDevice central, BLECharacteristic characteristic) {
-  characteristic.readValue(_servoCalibration);
-  //EEPROM.write(_epromIdxServoCalibration, _servoCalibration);
-  servo_update();
+void motor_updateCalibration(BLEDevice central, BLECharacteristic characteristic) {
+  characteristic.readValue(_motorCalibration);
+  //EEPROM.write(_epromIdxServoCalibration, _motorCalibration);
+  motor_update();
 }
 
-void servo_update() {
-  //Serial.print(_servoPower);
-  //Serial.print("->");
-  int8_t actualPower = (abs(_servoPower) < _servoCalibration) ? _servoPowerStop : _servoPower;
-  //Serial.print(actualPower);
-  //Serial.print("->");
-  int newSignal = map(actualPower, _servoPowerMin, _servoPowerMax, _servoSignalMin, _servoSignalMax);
-  //Serial.println(newSignal);
+void motor_update() {
+  int8_t actualPower = (abs(_motorPower) < _motorCalibration) ? _motorPowerStop : _motorPower;
+  int newSignal = map(actualPower, _motorPowerMin, _motorPowerMax, _motorSignalMin, _motorSignalMax);
 
-  if (newSignal != _servoCurrentSignal) {
-    _servoPowerFeedbackCharacteristic.writeValue(actualPower);
-    _servoCurrentSignal = newSignal;
-    if (_servoCurrentSignal == _servoSignalStop) {
-      _servo.writeMicroseconds(1500);
+  if (newSignal != _motorCurrentSignal) {
+    _motorPowerFeedbackCharacteristic.writeValue(actualPower);
+    _motorCurrentSignal = newSignal;
+#ifdef SERVO_PIN
+    if (_motorCurrentSignal == _motorSignalStop) {
+      _motor.writeMicroseconds(1500);
     }
     else {
-      _servo.write(_servoCurrentSignal);
+      _motor.write(_motorCurrentSignal);
     }
+#else
+  Serial.print("Motor -> ");
+  Serial.println(newSignal);
+#endif
   }
 }
+#endif
+
+#ifdef HAS_LIGHTING
 uint8_t _lightPower = 0;
 uint8_t _lightCalibration = 255;
 uint8_t _lightSensed = 0;
@@ -168,14 +185,20 @@ BLECharacteristic _lightCalibrationCharacteristic(
   sizeof(_lightCalibration));
 BLECharacteristic _lightSensedFeedbackCharacteristic(
   "03040002-4369-7479-2053-747265657473",
+#ifdef LIGHT_SENSOR_PIN
   BLERead | BLENotify,
+#else
+  BLERead | BLEWriteWithoutResponse| BLENotify,
+#endif
   sizeof(_lightSensed));
-
+#ifdef LIGHT_SENSOR_PIN
 Task _lightingTask(1000, TASK_FOREVER, &lighting_sense);
+#endif
 
 void lighting_setup() {
+  #ifdef LED_PIN
   pinMode(LED_PIN, OUTPUT);
-  //pinMode(LIGHT_SENSOR_PIN, INPUT);
+  #endif
 
   //if (_firstRun) {
     //EEPROM.write(_epromIdxLightingCalibration, _lightCalibration);
@@ -185,20 +208,25 @@ void lighting_setup() {
   //}
 
   _lightPowerControlCharacteristic.setEventHandler(BLEWritten, lighting_updatePower);
-  _cityStreetsService.addCharacteristic(_lightPowerControlCharacteristic);
+  _btService.addCharacteristic(_lightPowerControlCharacteristic);
 
   _lightPowerFeedbackCharacteristic.writeValue(_lightPower);
-  _cityStreetsService.addCharacteristic(_lightPowerFeedbackCharacteristic);
+  _btService.addCharacteristic(_lightPowerFeedbackCharacteristic);
 
   _lightCalibrationCharacteristic.writeValue(_lightCalibration);
   _lightCalibrationCharacteristic.setEventHandler(BLEWritten, lighting_updateCalibration);
-  _cityStreetsService.addCharacteristic(_lightCalibrationCharacteristic);
+  _btService.addCharacteristic(_lightCalibrationCharacteristic);
 
   _lightSensedFeedbackCharacteristic.writeValue(_lightSensed);
-  _cityStreetsService.addCharacteristic(_lightSensedFeedbackCharacteristic);
+#ifndef LIGHT_SENSOR_PIN
+  _lightSensedFeedbackCharacteristic.setEventHandler(BLEWritten, lighting_updateSensd);
+#endif
+  _btService.addCharacteristic(_lightSensedFeedbackCharacteristic);
 
+#ifdef LIGHT_SENSOR_PIN
   _runner.addTask(_lightingTask);
   _lightingTask.enable();
+#endif
 }
 
 void lighting_updatePower(BLEDevice central, BLECharacteristic characteristic) {
@@ -212,6 +240,7 @@ void lighting_updateCalibration(BLEDevice central, BLECharacteristic characteris
   lighting_update();
 }
 
+#ifdef LIGHT_SENSOR_PIN
 void lighting_sense() {
   int sensorValue = analogRead(LIGHT_SENSOR_PIN);
   uint8_t signal = map(sensorValue, 920, 1014, 0, 255);
@@ -222,6 +251,12 @@ Serial.println(signal);
     lighting_update();
   }
 }
+#else
+void lighting_updateSensd(BLEDevice central, BLECharacteristic characteristic) {
+  characteristic.readValue(_lightSensed);
+  lighting_update();
+}
+#endif
 
 void lighting_update() {
   const uint8_t powerMin = 0;
@@ -239,9 +274,15 @@ void lighting_update() {
   if (signal != _lightCurrentSignal) {
     _lightPowerFeedbackCharacteristic.writeValue(signal);
     _lightCurrentSignal = signal;
+  #ifdef LED_PIN
     analogWrite(LED_PIN, signal);
+  #else
+    Serial.print("Light -> ");
+    Serial.println(newSignal);
+  #endif
   }
 }
+#endif
 
 Task _bluetoothTask(100, TASK_FOREVER, &bluetooth_task);
 
@@ -254,8 +295,8 @@ void bluetooth_setup() {
   BLE.setEventHandler(BLEConnected, bluetooth_connected);
   BLE.setEventHandler(BLEDisconnected, bluetooth_disconnected);
   
-  BLE.setAdvertisedService(_cityStreetsService);
-  BLE.addService(_cityStreetsService);
+  BLE.setAdvertisedService(_btService);
+  BLE.addService(_btService);
 
   int r = BLE.advertise();
   if (r == 1) {

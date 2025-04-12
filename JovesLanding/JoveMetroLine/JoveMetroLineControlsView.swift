@@ -36,7 +36,6 @@ struct JoveMetroLineControlsView: View {
 					}
 					.frame(height: 44)
 			}
-			Divider()
 			GridRow {
 				Text("Idle").font(.headline)
 				ScrubView(
