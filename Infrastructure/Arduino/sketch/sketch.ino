@@ -1,19 +1,19 @@
 #define BTChar(x) x "-" BTService
 #define BTServiceIdentifier BTChar("00000000")
 
-#include "config.h"
+#include "citystreets.h"
 
-#ifdef BTService
-#include <ArduinoBLE.h>
-#endif
 #include <TaskScheduler.h>
+//#include <EEPROM.h>
 #ifdef HAS_MATRIX
 #include <Arduino_LED_Matrix.h>
 #endif
 #ifdef SERVO_PIN
 #include <Servo.h>
 #endif
-//#include <EEPROM.h>
+#ifdef BTService
+#include <ArduinoBLE.h>
+#endif
 
 void setup() {
   system_setup();
