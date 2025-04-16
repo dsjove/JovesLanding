@@ -8,8 +8,10 @@
 import SwiftUI
 import BLEByJove
 import Foundation
+import Combine
 
 public protocol Facility: ObservableObject, Identifiable {
+	var id: UUID { get }
 	var category: FacilityCategory { get }
 	var name: String { get }
 	var image: Image { get }
@@ -42,7 +44,7 @@ public protocol MotorizedFacility: Facility {
 	var motor: Motor { get }
 }
 
-public class UnsupportedFacility: ObservableObject, Facility {
+public class UnsupportedFacility: Facility {
 	public let id = UUID()
 	public let name: String
 	public let category: Infrastructure.FacilityCategory = .transportation

@@ -18,27 +18,20 @@ public class FacilitiesFactory {
 		if let existing = facilities[device.id] {
 			return existing
 		}
-		if device.service == JoveMetroLine.Service {
-			let facility = JoveMetroLine(device: device)
-			let entry = FacilityEntry(device.id, facility)
-			facilities[device.id, default: []].append(entry)
-			return facilities[device.id]!
+		let newFacilities: [any Facility]
+		switch device.service {
+			case JoveMetroLine.Service:
+				newFacilities = [JoveMetroLine(device: device)]
+			case CityStreets.Service:
+				newFacilities = [CityStreets(device: device)]
+			case TheJoveExpress.Service:
+				newFacilities = [TheJoveExpress(device: device)]
+			default:
+				newFacilities = [UnsupportedFacility(name: device.name)]
 		}
-		if device.service == CityStreets.Service {
-			let facility = CityStreets(device: device)
-			let entry = FacilityEntry(device.id, facility)
-			facilities[device.id, default: []].append(entry)
-			return facilities[device.id]!
-		}
-		if device.service == TheJoveExpress.Service {
-			let facility = TheJoveExpress(device: device)
-			let entry = FacilityEntry(device.id, facility)
-			facilities[device.id, default: []].append(entry)
-			return facilities[device.id]!
-		}
-		let facility = UnsupportedFacility(name: device.name)
-		let entry = FacilityEntry(device.id, facility)
-		return [entry]
+		let entries = newFacilities.map { FacilityEntry($0) }
+		facilities[device.id, default: []].append(contentsOf: entries)
+		return facilities[device.id]!
 	}
 }
 

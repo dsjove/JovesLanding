@@ -38,9 +38,6 @@
 		557513582DA87B9C00E73784 /* BLEByJove in Frameworks */ = {isa = PBXBuildFile; productRef = 557513572DA87B9C00E73784 /* BLEByJove */; };
 		5575135A2DA87BA800E73784 /* BLEByJove in Frameworks */ = {isa = PBXBuildFile; productRef = 557513592DA87BA800E73784 /* BLEByJove */; };
 		5575135C2DA87BB400E73784 /* BLEByJove in Frameworks */ = {isa = PBXBuildFile; productRef = 5575135B2DA87BB400E73784 /* BLEByJove */; };
-		557964A52DA973CA00CBAD6D /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = 557964A42DA973CA00CBAD6D /* README.md */; };
-		557964A62DA973CA00CBAD6D /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = 557964A42DA973CA00CBAD6D /* README.md */; };
-		557964A72DA973CA00CBAD6D /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = 557964A42DA973CA00CBAD6D /* README.md */; };
 		559AB9E02DA08EC000666C1A /* CityStreetsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 559AB9DF2DA08EC000666C1A /* CityStreetsView.swift */; };
 		559AB9E12DA08EC000666C1A /* CityStreetsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 559AB9DF2DA08EC000666C1A /* CityStreetsView.swift */; };
 		559AB9E52DA08F8400666C1A /* ConductedView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 559AB9E42DA08F8400666C1A /* ConductedView.swift */; };
@@ -139,11 +136,11 @@
 		550F95042DA0503400C0A34B /* ArduinoDisplayControlView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArduinoDisplayControlView.swift; sourceTree = "<group>"; };
 		55268B86294B7BF200BA9AC6 /* FacilitiesListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FacilitiesListView.swift; sourceTree = "<group>"; };
 		554740D82954F49B00948BBB /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		55490BD52DAFE74C00D7E433 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		555C8AD12D8F044700EA33E0 /* MotorizedFacilityGauageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MotorizedFacilityGauageView.swift; sourceTree = "<group>"; };
 		556E65C5294D1DD500FCEFD6 /* JovesControl.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = JovesControl.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		556E65CB294D1DD500FCEFD6 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		556E65CE294D1DD500FCEFD6 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
-		557964A42DA973CA00CBAD6D /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		559AB9DF2DA08EC000666C1A /* CityStreetsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CityStreetsView.swift; sourceTree = "<group>"; };
 		559AB9E42DA08F8400666C1A /* ConductedView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConductedView.swift; sourceTree = "<group>"; };
 		559E023F2D9447CD00CA3953 /* MotorState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MotorState.swift; sourceTree = "<group>"; };
@@ -291,6 +288,7 @@
 		55F2840F2944452700047EF5 = {
 			isa = PBXGroup;
 			children = (
+				55490BD52DAFE74C00D7E433 /* README.md */,
 				55E9496B2D933C3000D79246 /* CityStreats */,
 				55E949802D93400800D79246 /* JoveMetroLine */,
 				55D1A333294EB47B003381C3 /* TheJoveExpress */,
@@ -301,7 +299,6 @@
 				556E65C6294D1DD500FCEFD6 /* JovesControl */,
 				55F284192944452700047EF5 /* Products */,
 				55F2843C2944459D00047EF5 /* Frameworks */,
-				557964A42DA973CA00CBAD6D /* README.md */,
 			);
 			sourceTree = "<group>";
 		};
@@ -509,7 +506,6 @@
 			files = (
 				556E65CF294D1DD500FCEFD6 /* Preview Assets.xcassets in Resources */,
 				55D1A2F7294EB39F003381C3 /* Media.xcassets in Resources */,
-				557964A52DA973CA00CBAD6D /* README.md in Resources */,
 				556E65CC294D1DD500FCEFD6 /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -520,7 +516,6 @@
 			files = (
 				55F284232944452800047EF5 /* Preview Assets.xcassets in Resources */,
 				55D1A2F5294EB39F003381C3 /* Media.xcassets in Resources */,
-				557964A62DA973CA00CBAD6D /* README.md in Resources */,
 				55F284202944452800047EF5 /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -538,7 +533,6 @@
 			files = (
 				55F2847029444DD200047EF5 /* Preview Assets.xcassets in Resources */,
 				55D1A34E294EB56B003381C3 /* Media.xcassets in Resources */,
-				557964A72DA973CA00CBAD6D /* README.md in Resources */,
 				55F284892944583100047EF5 /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

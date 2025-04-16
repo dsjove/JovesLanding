@@ -11,7 +11,4 @@
    <FileRef
       location = "group:JovesLanding/JovesLanding.xcodeproj">
    </FileRef>
-   <FileRef
-      location = "group:README.md">
-   </FileRef>
 </Workspace>

@@ -12,6 +12,7 @@ import BLEByJove
 
 public class CityStreets: ObservableObject, MotorizedFacility {
 	public static let Service = BTServiceIdentity(name: "City Streets")
+	public let id = UUID()
 	private let device: BTBroadcaster & BTControl
 	private var sink: Set<AnyCancellable> = []
 

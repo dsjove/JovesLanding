@@ -13,7 +13,7 @@ import BLEByJove
 extension TheJoveExpress: Facility {
 
 	public var category: FacilityCategory { .transportation }
-	public var image: Image { Image(systemName: "Train") }
+	public var image: Image { Image(systemName: "train.side.front.car") }
 	public var name: String { name2.feedback }
 
 	public convenience init() {
@@ -24,6 +24,7 @@ extension TheJoveExpress: Facility {
 public class TheJoveExpress: ObservableObject {
 	public static let Service = BTServiceIdentity(name: "TJEx")
 	
+	public let id = UUID()
 	private let device: BTBroadcaster & BTControl
 	private var sink: Set<AnyCancellable> = []
 	public var connectionState: BLEByJove.ConnectionState = .disconnected

@@ -20,7 +20,7 @@ struct FacilitiesListView: View {
 		NavigationSplitView(columnVisibility: $visibility) {
 			Group {
 				if client.devices.isEmpty {
-					Text("No systems found.")
+					Text("No facilities found.")
 				}
 				else {
 					List(client.devices, selection: $device) { device in
@@ -37,9 +37,9 @@ struct FacilitiesListView: View {
 		detail: {
 			FacilityDetailView(impl: device?.facility)
 				.toolbarBackground(Color.green.opacity(1.0), for: .navigationBar)
-				#if os(iOS) || os(watchOS)
+#if !os(tvOS)
 				.navigationBarTitleDisplayMode(.inline)
-				#endif
+#endif
 		}
 		.onChange(of: device) { [device] newValue in
 			if device?.id != newValue?.id {

@@ -12,8 +12,8 @@ public struct FacilityEntry: Identifiable, Hashable {
 	public let id: UUID
 	public let facility: any Facility
 
-	public init(_ id: UUID, _ facility: any Facility) {
-		self.id = id
+	public init(_ facility: any Facility) {
+		self.id = facility.id
 		self.facility = facility
 	}
 

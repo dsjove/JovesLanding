@@ -12,6 +12,7 @@ import SwiftUI
 
 public class JoveMetroLine: ObservableObject, MotorizedFacility {
 	public static let Service = CircuitCube.Service
+	public let id = UUID()
 	private let cube: CircuitCube
 	private var sink: Set<AnyCancellable> = []
 	private var beatCheck: Cancellable = AnyCancellable({})
@@ -44,7 +45,7 @@ public class JoveMetroLine: ObservableObject, MotorizedFacility {
 	}
 
 	public var category: FacilityCategory { .transportation }
-	public var image: Image { Image(systemName: "train.side.front.car") }
+	public var image: Image { Image(systemName: "lightrail") }
 
 	@Published
 	public private(set) var name: String
