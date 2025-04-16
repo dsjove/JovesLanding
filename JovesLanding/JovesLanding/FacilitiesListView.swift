@@ -24,10 +24,11 @@ struct FacilitiesListView: View {
 				}
 				else {
 					List(client.devices, selection: $device) { device in
-						let facility = facilities.implementation(for: device)
-						let entry = FacilityEntry(device.id, facility)
-						NavigationLink(value: entry) {
-							FacilityLineView(facility: facility)
+						let facilities = facilities.implementation(for: device)
+						ForEach(facilities) { entry in
+							NavigationLink(value: entry) {
+								FacilityLineView(facility: entry.facility)
+							}
 						}
 					}
 				}

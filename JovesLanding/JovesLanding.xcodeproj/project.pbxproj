@@ -47,9 +47,6 @@
 		559E02402D9447CD00CA3953 /* MotorState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 559E023F2D9447CD00CA3953 /* MotorState.swift */; };
 		559E02412D9447CD00CA3953 /* MotorState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 559E023F2D9447CD00CA3953 /* MotorState.swift */; };
 		559E02422D9447CD00CA3953 /* MotorState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 559E023F2D9447CD00CA3953 /* MotorState.swift */; };
-		559E02442D94628800CA3953 /* FacilityEntry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 559E02432D94628700CA3953 /* FacilityEntry.swift */; };
-		559E02452D94628800CA3953 /* FacilityEntry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 559E02432D94628700CA3953 /* FacilityEntry.swift */; };
-		559E02462D94628800CA3953 /* FacilityEntry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 559E02432D94628700CA3953 /* FacilityEntry.swift */; };
 		559E02472D94CA5300CA3953 /* MotionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55D1A339294EB47B003381C3 /* MotionView.swift */; };
 		559E02482D94CA5300CA3953 /* ConnectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55D1A335294EB47B003381C3 /* ConnectionView.swift */; };
 		559E02492D94CA5300CA3953 /* LightsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55D1A336294EB47B003381C3 /* LightsView.swift */; };
@@ -150,7 +147,6 @@
 		559AB9DF2DA08EC000666C1A /* CityStreetsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CityStreetsView.swift; sourceTree = "<group>"; };
 		559AB9E42DA08F8400666C1A /* ConductedView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConductedView.swift; sourceTree = "<group>"; };
 		559E023F2D9447CD00CA3953 /* MotorState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MotorState.swift; sourceTree = "<group>"; };
-		559E02432D94628700CA3953 /* FacilityEntry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FacilityEntry.swift; sourceTree = "<group>"; };
 		55A0DE852D9EFF6000FCA504 /* ImagePicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagePicker.swift; sourceTree = "<group>"; };
 		55A0DE892D9F08B900FCA504 /* HVStack.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HVStack.swift; sourceTree = "<group>"; };
 		55A730732D9B4738005CA3C1 /* FacilityConnectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FacilityConnectionView.swift; sourceTree = "<group>"; };
@@ -253,7 +249,6 @@
 				55A0DE892D9F08B900FCA504 /* HVStack.swift */,
 				55A0DE852D9EFF6000FCA504 /* ImagePicker.swift */,
 				55A730732D9B4738005CA3C1 /* FacilityConnectionView.swift */,
-				559E02432D94628700CA3953 /* FacilityEntry.swift */,
 				55002C532D8F0FCC003B9952 /* Indicators */,
 				55D1A2D2294EB39F003381C3 /* Media.xcassets */,
 			);
@@ -560,7 +555,6 @@
 				55D1A2F4294EB39F003381C3 /* FacilityDetailView.swift in Sources */,
 				55D1A344294EB47B003381C3 /* EngineView.swift in Sources */,
 				55A0DE8A2D9F08BA00FCA504 /* HVStack.swift in Sources */,
-				559E02442D94628800CA3953 /* FacilityEntry.swift in Sources */,
 				55E50AE029501CC500FC0773 /* JoveMetroLineView.swift in Sources */,
 				55D1A346294EB47B003381C3 /* MotionView.swift in Sources */,
 				556E65D3294D1DF600FCEFD6 /* FacilitiesListView.swift in Sources */,
@@ -595,7 +589,6 @@
 				55A0DE882D9EFF6100FCA504 /* ImagePicker.swift in Sources */,
 				55D1A2F3294EB39F003381C3 /* FacilityDetailView.swift in Sources */,
 				55A0DE8B2D9F08BA00FCA504 /* HVStack.swift in Sources */,
-				559E02452D94628800CA3953 /* FacilityEntry.swift in Sources */,
 				55F284342944455800047EF5 /* FacilitiesListView.swift in Sources */,
 				55D1A343294EB47B003381C3 /* EngineView.swift in Sources */,
 				55D1A345294EB47B003381C3 /* MotionView.swift in Sources */,
@@ -644,7 +637,6 @@
 				55002C582D8F0FCC003B9952 /* MotorIndicatorView.swift in Sources */,
 				55D1A34C294EB55F003381C3 /* JovesLandingApp.swift in Sources */,
 				55D1A353294EB572003381C3 /* ViewDidLoadModifier.swift in Sources */,
-				559E02462D94628800CA3953 /* FacilityEntry.swift in Sources */,
 				55268B87294B7BF200BA9AC6 /* FacilitiesListView.swift in Sources */,
 				55E9497D2D93400100D79246 /* JoveMetroLineControlsView.swift in Sources */,
 				55D1A359294EB57A003381C3 /* GaugeIndicatorsView.swift in Sources */,

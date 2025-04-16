@@ -15,7 +15,8 @@ public protocol LightingProtocol {
 	var calibration: Value { get set }
 	var sensed: Value { get set }
 
-	var increment: Double? { get}
+	var hasDimmer : Bool { get }
+	var increment: Double? { get }
 	var hasSensor: Bool { get }
 }
 
@@ -39,6 +40,7 @@ public struct CCLighting: LightingProtocol {
 	public var power: Value
 	public var calibration: Value
 	public var sensed: Value
+	public let hasDimmer: Bool = true
 	public let hasSensor: Bool = false
 
 	public init(cube: CircuitCube) {
@@ -68,6 +70,7 @@ public struct BTLighting: LightingProtocol {
 	public var calibration: Value
 	public var sensed: Value
 	public let increment: Double? = 0.01
+	public let hasDimmer: Bool = true
 	public let hasSensor: Bool = true
 
 	public init(device: BTBroadcaster & BTControl) {

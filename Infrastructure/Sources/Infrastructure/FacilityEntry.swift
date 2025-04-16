@@ -7,7 +7,6 @@
 
 import SwiftUI
 import Combine
-import Infrastructure
 
 public struct FacilityEntry: Identifiable, Hashable {
 	public let id: UUID

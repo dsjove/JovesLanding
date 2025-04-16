@@ -9,7 +9,7 @@ import SwiftUI
 import BLEByJove
 import Foundation
 
-public protocol Facility: ObservableObject {
+public protocol Facility: ObservableObject, Identifiable {
 	var category: FacilityCategory { get }
 	var name: String { get }
 	var image: Image { get }

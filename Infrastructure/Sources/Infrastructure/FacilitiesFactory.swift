@@ -9,31 +9,36 @@ import BLEByJove
 import Foundation
 
 public class FacilitiesFactory {
-	private var facilities: [UUID: any Facility] = [:]
+	private var facilities: [UUID: [FacilityEntry]] = [:]
 
 	public init() {
 	}
 
-	public func implementation(for device: BTDevice) -> any Facility {
+	public func implementation(for device: BTDevice) -> [FacilityEntry] {
 		if let existing = facilities[device.id] {
 			return existing
 		}
 		if device.service == JoveMetroLine.Service {
 			let facility = JoveMetroLine(device: device)
-			facilities[device.id] = facility
-			return facility
+			let entry = FacilityEntry(device.id, facility)
+			facilities[device.id, default: []].append(entry)
+			return facilities[device.id]!
 		}
 		if device.service == CityStreets.Service {
 			let facility = CityStreets(device: device)
-			facilities[device.id] = facility
-			return facility
+			let entry = FacilityEntry(device.id, facility)
+			facilities[device.id, default: []].append(entry)
+			return facilities[device.id]!
 		}
 		if device.service == TheJoveExpress.Service {
 			let facility = TheJoveExpress(device: device)
-			facilities[device.id] = facility
-			return facility
+			let entry = FacilityEntry(device.id, facility)
+			facilities[device.id, default: []].append(entry)
+			return facilities[device.id]!
 		}
-		return UnsupportedFacility(name: device.name)
+		let facility = UnsupportedFacility(name: device.name)
+		let entry = FacilityEntry(device.id, facility)
+		return [entry]
 	}
 }
 

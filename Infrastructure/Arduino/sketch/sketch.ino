@@ -1,3 +1,8 @@
+struct LightOutput {
+	int pin;
+	bool dimmable;
+};
+
 #define BTChar(x) x "-" BTService
 #define BTServiceIdentifier BTChar("00000000")
 
@@ -190,6 +195,9 @@ void motor_update() {
 #endif
 
 #ifdef HAS_LIGHTING
+#ifdef LIGHT_OUTPUT
+const LightOutput _lightOutput[] = LIGHT_OUTPUT;
+#endif
 uint8_t _lightPower = 0;
 uint8_t _lightCalibration = 255;
 uint8_t _lightSensed = 0;
@@ -223,8 +231,10 @@ Task _lightingTask(1000, TASK_FOREVER, &lighting_sense);
 #endif
 
 void lighting_setup() {
-  #ifdef LED_PIN
-  pinMode(LED_PIN, OUTPUT);
+  #ifdef LIGHT_OUTPUT
+  for (LightOutput light : _lightOutput) {
+    pinMode(light.pin, OUTPUT);
+  }
   #endif
 
   //if (_firstRun) {
@@ -309,8 +319,16 @@ void lighting_update() {
     _lightPowerFeedbackCharacteristic.writeValue(signal);
   #endif
     _lightCurrentSignal = signal;
-  #ifdef LED_PIN
-    analogWrite(LED_PIN, signal);
+
+  #ifdef LIGHT_OUTPUT
+  for (LightOutput light : _lightOutput) {
+      if (light.dimmable) {
+        analogWrite(light.pin, signal);
+      }
+      else {
+        digitalWrite(light.pin, signal);
+      }
+  }
   #else
     Serial.print("Light -> ");
     Serial.println(signal);
