@@ -3,8 +3,6 @@ struct LightOutput {
 	bool dimmable;
 };
 
-#define BTChar(x) x "-" BTFacilityID
-
 #include "citystreets.h"
 
 #include <TaskScheduler.h>
@@ -15,7 +13,7 @@ struct LightOutput {
 #ifdef SERVO_PIN
 #include <Servo.h>
 #endif
-#ifdef BTFacilityID
+#ifdef BLEFacilityID
 #include "BTServiceID.h"
 #endif
 
@@ -30,7 +28,7 @@ void setup() {
 #ifdef HAS_LIGHTING
   lighting_setup();
 #endif
-#ifdef BTFacilityID
+#ifdef BLEFacilityID
   bluetooth_setup();
 #else
   Serial.println("NO BLE Enabled");
@@ -42,9 +40,10 @@ void loop() {
   _runner.execute();
 }
 
-#ifdef BTFacilityID
-BTServiceID _btServiceID(BTFacilityID);
-BLEService _BTService(_btServiceID);
+#ifdef BLEFacilityID
+BTServiceID _bleID(BLEFacilityID);
+BLEService _bleService(_bleID);
+#define BTChar(x) x "-" BLEFacilityID
 #endif
 
 //const int _epromIdxFirstRun = 0;
@@ -69,24 +68,20 @@ uint32_t _matrixCurrent[3] = {
       0x100a0841
   };
 
-#ifdef BTFacilityID
-BLECharacteristic _matrixDisplayCharacteristic(
-  BTChar("07020000"), 
-  BLERead | BLEWriteWithoutResponse | BLENotify, 
-  sizeof(_matrixCurrent));
+#ifdef BLEFacilityID
+BLECharacteristic _matrixDisplayChar = _bleID.characteristic("07020000", &_matrixCurrent, matrix_updateDisplay);
 #endif
 
 void matrix_setup() {
   _matrix.begin();
-    _matrix.loadFrame(_matrixCurrent);
- #ifdef BTFacilityID
-  _matrixDisplayCharacteristic.writeValue(_matrixCurrent, sizeof(_matrixCurrent));
-  _matrixDisplayCharacteristic.setEventHandler(BLEWritten, matrix_updateDisplay);
-  _BTService.addCharacteristic(_matrixDisplayCharacteristic);
+  _matrix.loadFrame(_matrixCurrent);
+
+ #ifdef BLEFacilityID
+  _bleService.addCharacteristic(_matrixDisplayChar);
 #endif
 }
 
-#ifdef BTFacilityID
+#ifdef BLEFacilityID
 void matrix_updateDisplay(BLEDevice device, BLECharacteristic characteristic) {
   uint32_t value[3];
   characteristic.readValue(value, sizeof(value));
@@ -117,7 +112,7 @@ uint8_t _motorCalibration = _motorPowerMax / 4;
 int _motorCurrentSignal = _motorSignalStop;
 //const int _epromIdxServoCalibration = 1;
 
-#ifdef BTFacilityID
+#ifdef BLEFacilityID
 BLECharacteristic _motorPowerControlCharacteristic(
   BTChar("02020001"), 
   BLEWriteWithoutResponse,
@@ -143,20 +138,20 @@ void motor_setup() {
     //_motorCalibration = EEPROM.read(_epromIdxServoCalibration);
   //}
 
-#ifdef BTFacilityID
+#ifdef BLEFacilityID
   _motorPowerControlCharacteristic.setEventHandler(BLEWritten, motor_updatePower);
-  _BTService.addCharacteristic(_motorPowerControlCharacteristic);
+  _bleService.addCharacteristic(_motorPowerControlCharacteristic);
 
   _motorPowerFeedbackCharacteristic.writeValue(_motorPower);
-  _BTService.addCharacteristic(_motorPowerFeedbackCharacteristic);
+  _bleService.addCharacteristic(_motorPowerFeedbackCharacteristic);
 
   _motorCalibrationCharacteristic.writeValue(_motorCalibration);
   _motorCalibrationCharacteristic.setEventHandler(BLEWritten, motor_updateCalibration);
-  _BTService.addCharacteristic(_motorCalibrationCharacteristic);
+  _bleService.addCharacteristic(_motorCalibrationCharacteristic);
 #endif
 }
 
-#ifdef BTFacilityID
+#ifdef BLEFacilityID
 void motor_updatePower(BLEDevice central, BLECharacteristic characteristic) {
   characteristic.readValue(_motorPower);
   motor_update();
@@ -174,7 +169,7 @@ void motor_update() {
   int newSignal = map(actualPower, _motorPowerMin, _motorPowerMax, _motorSignalMin, _motorSignalMax);
 
   if (newSignal != _motorCurrentSignal) {
-#ifdef BTFacilityID
+#ifdef BLEFacilityID
     _motorPowerFeedbackCharacteristic.writeValue(actualPower);
 #endif
     _motorCurrentSignal = newSignal;
@@ -202,7 +197,7 @@ uint8_t _lightCalibration = 255;
 uint8_t _lightSensed = 0;
 uint8_t _lightCurrentSignal = 0;
 
-#ifdef BTFacilityID
+#ifdef BLEFacilityID
 BLECharacteristic _lightPowerControlCharacteristic(
   BTChar("03020001"),
   BLEWriteWithoutResponse,
@@ -243,22 +238,22 @@ void lighting_setup() {
     //_lightCalibration = EEPROM.read(_epromIdxLightingCalibration);
   //}
 
-#ifdef BTFacilityID
+#ifdef BLEFacilityID
   _lightPowerControlCharacteristic.setEventHandler(BLEWritten, lighting_updatePower);
-  _BTService.addCharacteristic(_lightPowerControlCharacteristic);
+  _bleService.addCharacteristic(_lightPowerControlCharacteristic);
 
   _lightPowerFeedbackCharacteristic.writeValue(_lightPower);
-  _BTService.addCharacteristic(_lightPowerFeedbackCharacteristic);
+  _bleService.addCharacteristic(_lightPowerFeedbackCharacteristic);
 
   _lightCalibrationCharacteristic.writeValue(_lightCalibration);
   _lightCalibrationCharacteristic.setEventHandler(BLEWritten, lighting_updateCalibration);
-  _BTService.addCharacteristic(_lightCalibrationCharacteristic);
+  _bleService.addCharacteristic(_lightCalibrationCharacteristic);
 
   _lightSensedFeedbackCharacteristic.writeValue(_lightSensed);
 #ifndef LIGHT_SENSOR_PIN
   _lightSensedFeedbackCharacteristic.setEventHandler(BLEWritten, lighting_updateSensed);
 #endif
-  _BTService.addCharacteristic(_lightSensedFeedbackCharacteristic);
+  _bleService.addCharacteristic(_lightSensedFeedbackCharacteristic);
 #endif
 #ifdef LIGHT_SENSOR_PIN
   _runner.addTask(_lightingTask);
@@ -266,7 +261,7 @@ void lighting_setup() {
 #endif
 }
 
-#ifdef BTFacilityID
+#ifdef BLEFacilityID
 void lighting_updatePower(BLEDevice central, BLECharacteristic characteristic) {
   characteristic.readValue(_lightPower);
   lighting_update();
@@ -285,14 +280,14 @@ void lighting_sense() {
   uint8_t signal = map(sensorValue, 920, 1014, 0, 255);
   if (signal != _lightSensed) {
     _lightSensed = signal;
-#ifdef BTFacilityID
+#ifdef BLEFacilityID
     _lightSensedFeedbackCharacteristic.writeValue(_lightSensed);
 #endif
     lighting_update();
   }
 }
 #else
-#ifdef BTFacilityID
+#ifdef BLEFacilityID
 void lighting_updateSensed(BLEDevice central, BLECharacteristic characteristic) {
   characteristic.readValue(_lightSensed);
   lighting_update();
@@ -314,7 +309,7 @@ void lighting_update() {
   }
 
   if (signal != _lightCurrentSignal) {
-  #ifdef BTFacilityID
+  #ifdef BLEFacilityID
     _lightPowerFeedbackCharacteristic.writeValue(signal);
   #endif
     _lightCurrentSignal = signal;
@@ -336,7 +331,7 @@ void lighting_update() {
 }
 #endif
 
-#ifdef BTFacilityID
+#ifdef BLEFacilityID
 Task _bluetoothTask(100, TASK_FOREVER, &bluetooth_task);
 
 void bluetooth_setup() {
@@ -344,20 +339,20 @@ void bluetooth_setup() {
     Serial.println("Starting Bluetooth® Low Energy module failed!");
     while (1);
   }
-  #ifdef BTLocalName
-  BLE.setLocalName(BTLocalName);
+  #ifdef BLELocalName
+  BLE.setLocalName(BLELocalName);
   #endif
   BLE.setEventHandler(BLEConnected, bluetooth_connected);
   BLE.setEventHandler(BLEDisconnected, bluetooth_disconnected);
   
-  BLE.setAdvertisedService(_BTService);
-  BLE.addService(_BTService);
+  BLE.setAdvertisedService(_bleService);
+  BLE.addService(_bleService);
 
   int r = BLE.advertise();
   if (r == 1) {
     Serial.println("Bluetooth® device active, waiting for connections...");
-    Serial.println(BTLocalName);
-    Serial.println((const char *)_btServiceID);
+    Serial.println(BLELocalName);
+    Serial.println((const char *)_bleID);
   }
   else {
     Serial.println("Bluetooth® activation failed!");

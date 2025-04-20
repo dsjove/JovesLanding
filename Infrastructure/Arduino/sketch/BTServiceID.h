@@ -20,9 +20,8 @@ public:
   {
     char fullID[37];
     ::memcpy(fullID, id, 8);
-    ::memcpy(fullID + 8, _id, 29);
+    ::memcpy(fullID + 8, _id + 8, 29);
 
-  Serial.println(fullID);
     uint16_t permissions = 0;
     if (value)
     {

@@ -1,5 +1,5 @@
-#define BTFacilityID "4369-7479-2053-747265657473"
-#define BTLocalName "City Streets"
+#define BLEFacilityID "4369-7479-2053-747265657473"
+#define BLELocalName "City Streets"
 
 #define HAS_MATRIX
 #define HAS_MOTOR
