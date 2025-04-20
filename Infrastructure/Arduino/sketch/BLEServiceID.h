@@ -1,9 +1,9 @@
 #include <ArduinoBLE.h>
 
-class BTServiceID
+class BLEServiceID
 {
 public:
-  BTServiceID(const char serviceID[28])
+  BLEServiceID(const char serviceID[28])
   {
     ::memset(_id, '0', 8);
     _id[8] = '-';
@@ -16,7 +16,7 @@ public:
   }
 
   template <typename T>
-  BLECharacteristic characteristic(const char id[8], T* value, BLECharacteristicEventHandler eventHandler = NULL) 
+  BLECharacteristic characteristic(const char id[8], T* value, BLECharacteristicEventHandler eventHandler = NULL) const 
   {
     char fullID[37];
     ::memcpy(fullID, id, 8);
@@ -35,7 +35,6 @@ public:
     BLECharacteristic characteristic(fullID, permissions, sizeof(T));
     if (value) 
     {
-      //characteristic.writeValue(*value);
       characteristic.writeValue(value, sizeof(T));
     }
     if (eventHandler)
