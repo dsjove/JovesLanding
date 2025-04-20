@@ -113,18 +113,9 @@ int _motorCurrentSignal = _motorSignalStop;
 //const int _epromIdxServoCalibration = 1;
 
 #ifdef BLEFacilityID
-BLECharacteristic _motorPowerControlCharacteristic(
-  BTChar("02020001"), 
-  BLEWriteWithoutResponse,
-  sizeof(_motorPower));
-BLECharacteristic _motorPowerFeedbackCharacteristic(
-  BTChar("02020002"), 
-  BLERead | BLENotify, 
-  sizeof(_motorPower));
-BLECharacteristic _motorCalibrationCharacteristic(
-  BTChar("02010000"), 
-  BLERead | BLEWriteWithoutResponse| BLENotify, 
-  sizeof(_motorCalibration));
+BLECharacteristic _motorPowerControlChar = _bleID.characteristic("02020001", (uint8_t*)NULL, motor_updatePower);
+BLECharacteristic _motorPowerFeedbackChar = _bleID.characteristic("02020002", &_motorPower);
+BLECharacteristic _motorCalibrationChar = _bleID.characteristic("02010000", &_motorCalibration, motor_updateCalibration);
 #endif
 
 void motor_setup() {
@@ -139,15 +130,9 @@ void motor_setup() {
   //}
 
 #ifdef BLEFacilityID
-  _motorPowerControlCharacteristic.setEventHandler(BLEWritten, motor_updatePower);
-  _bleService.addCharacteristic(_motorPowerControlCharacteristic);
-
-  _motorPowerFeedbackCharacteristic.writeValue(_motorPower);
-  _bleService.addCharacteristic(_motorPowerFeedbackCharacteristic);
-
-  _motorCalibrationCharacteristic.writeValue(_motorCalibration);
-  _motorCalibrationCharacteristic.setEventHandler(BLEWritten, motor_updateCalibration);
-  _bleService.addCharacteristic(_motorCalibrationCharacteristic);
+  _bleService.addCharacteristic(_motorPowerControlChar);
+  _bleService.addCharacteristic(_motorPowerFeedbackChar);
+  _bleService.addCharacteristic(_motorCalibrationChar);
 #endif
 }
 
@@ -170,7 +155,7 @@ void motor_update() {
 
   if (newSignal != _motorCurrentSignal) {
 #ifdef BLEFacilityID
-    _motorPowerFeedbackCharacteristic.writeValue(actualPower);
+    _motorPowerFeedbackChar.writeValue(actualPower);
 #endif
     _motorCurrentSignal = newSignal;
 #ifdef SERVO_PIN
@@ -198,26 +183,14 @@ uint8_t _lightSensed = 0;
 uint8_t _lightCurrentSignal = 0;
 
 #ifdef BLEFacilityID
-BLECharacteristic _lightPowerControlCharacteristic(
-  BTChar("03020001"),
-  BLEWriteWithoutResponse,
-  sizeof(_lightPower));
-BLECharacteristic _lightPowerFeedbackCharacteristic(
-  BTChar("03020002"),
-  BLERead | BLENotify,
-  sizeof(_lightPower));
-BLECharacteristic _lightCalibrationCharacteristic(
-  BTChar("03010000"),
-  BLERead | BLEWriteWithoutResponse| BLENotify,
-  sizeof(_lightCalibration));
-BLECharacteristic _lightSensedFeedbackCharacteristic(
-  BTChar("03040002"),
+BLECharacteristic _lightPowerControlChar = _bleID.characteristic("03020001", (uint8_t*)NULL, lighting_updatePower);
+BLECharacteristic _lightPowerFeedbackChar = _bleID.characteristic("03020002", &_lightPower);
+BLECharacteristic _lightCalibrationChar = _bleID.characteristic("03010000", &_lightCalibration, lighting_updateCalibration);
 #ifdef LIGHT_SENSOR_PIN
-  BLERead | BLENotify,
+BLECharacteristic _lightSensedFeedbackChar = _bleID.characteristic("03040002", &_lightSensed);
 #else
-  BLERead | BLEWriteWithoutResponse| BLENotify,
+BLECharacteristic _lightSensedFeedbackChar = _bleID.characteristic("03040002", &_lightSensed, lighting_updateSensed);
 #endif
-  sizeof(_lightSensed));
 #endif
 
 #ifdef LIGHT_SENSOR_PIN
@@ -239,21 +212,10 @@ void lighting_setup() {
   //}
 
 #ifdef BLEFacilityID
-  _lightPowerControlCharacteristic.setEventHandler(BLEWritten, lighting_updatePower);
-  _bleService.addCharacteristic(_lightPowerControlCharacteristic);
-
-  _lightPowerFeedbackCharacteristic.writeValue(_lightPower);
-  _bleService.addCharacteristic(_lightPowerFeedbackCharacteristic);
-
-  _lightCalibrationCharacteristic.writeValue(_lightCalibration);
-  _lightCalibrationCharacteristic.setEventHandler(BLEWritten, lighting_updateCalibration);
-  _bleService.addCharacteristic(_lightCalibrationCharacteristic);
-
-  _lightSensedFeedbackCharacteristic.writeValue(_lightSensed);
-#ifndef LIGHT_SENSOR_PIN
-  _lightSensedFeedbackCharacteristic.setEventHandler(BLEWritten, lighting_updateSensed);
-#endif
-  _bleService.addCharacteristic(_lightSensedFeedbackCharacteristic);
+  _bleService.addCharacteristic(_lightPowerControlChar);
+  _bleService.addCharacteristic(_lightPowerFeedbackChar);
+  _bleService.addCharacteristic(_lightCalibrationChar);
+  _bleService.addCharacteristic(_lightSensedFeedbackChar);
 #endif
 #ifdef LIGHT_SENSOR_PIN
   _runner.addTask(_lightingTask);
@@ -281,7 +243,7 @@ void lighting_sense() {
   if (signal != _lightSensed) {
     _lightSensed = signal;
 #ifdef BLEFacilityID
-    _lightSensedFeedbackCharacteristic.writeValue(_lightSensed);
+    _lightSensedFeedbackChar.writeValue(_lightSensed);
 #endif
     lighting_update();
   }
@@ -310,7 +272,7 @@ void lighting_update() {
 
   if (signal != _lightCurrentSignal) {
   #ifdef BLEFacilityID
-    _lightPowerFeedbackCharacteristic.writeValue(signal);
+    _lightPowerFeedbackChar.writeValue(signal);
   #endif
     _lightCurrentSignal = signal;
 

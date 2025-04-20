@@ -16,7 +16,7 @@ public:
   }
 
   template <typename T>
-  BLECharacteristic characteristic(const char id[8], T* value, BLECharacteristicEventHandler eventHandler) 
+  BLECharacteristic characteristic(const char id[8], T* value, BLECharacteristicEventHandler eventHandler = NULL) 
   {
     char fullID[37];
     ::memcpy(fullID, id, 8);
