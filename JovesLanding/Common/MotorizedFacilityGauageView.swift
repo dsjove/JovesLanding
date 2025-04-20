@@ -33,7 +33,7 @@ struct MotorizedFacilityGauageView<F: MotorizedFacility> : View {
 	}
 
 	var body: some View {
-		let model = SbjGauge.Model(
+		let model = SbjGauge.StandardModel(
 			power: motorPower.feedback,
 			control: motorPower.control,
 			idle: motorCalibration.feedback)

@@ -1,4 +1,4 @@
-#define BTService "4369-7479-2053-747265657473"
+#define BTServiceID "4369-7479-2053-747265657473"
 #define BTLocalName "City Streets"
 
 #define HAS_MATRIX
