@@ -1,14 +1,17 @@
 #include "Motor.h"
 
-static Motor* refs[2] = {NULL, NULL};
+static Motor* motorRefs[2] = {NULL, NULL};
 
 Motor::Motor(uint8_t component, int pin, BLEServiceRunner& ble)
 : _pin(pin)
+, _currentPower(0)
+, _currentCalibration(_powerMax / 4)
+, _currentSignal(_signalStop)
 , _powerControlChar(ble.characteristic(component, "020001", (uint8_t*)NULL, updatePower))
-, _powerFeedbackChar(ble.characteristic(component, "020002", &_motorPower))
-, _calibrationChar(ble.characteristic(component, "010000", &_motorCalibration, updateCalibration))
+, _powerFeedbackChar(ble.characteristic(component, "020002", &_currentPower))
+, _calibrationChar(ble.characteristic(component, "010000", &_currentCalibration, updateCalibration))
 {
-  refs[component-1] = this;
+  motorRefs[0] = this;
 }
 
 void Motor::begin() 
@@ -18,32 +21,34 @@ void Motor::begin()
 
 void Motor::update()
 {
-  int8_t actualPower = (abs(_motorPower) < _motorCalibration) ? _motorPowerStop : _motorPower;
-  int newSignal = map(actualPower, _motorPowerMin, _motorPowerMax, _motorSignalMin, _motorSignalMax);
+  int8_t actualPower = (abs(_currentPower) < _currentCalibration) ? _powerStop : _currentPower;
+  int newSignal = map(actualPower, _powerMin, _powerMax, _signalMin, _signalMax);
 
-  if (newSignal != _motorCurrentSignal)
+  if (newSignal != _currentSignal)
   {
     _powerFeedbackChar.writeValue(actualPower);
-    _motorCurrentSignal = newSignal;
-    if (_motorCurrentSignal == _motorSignalStop)
+    _currentSignal = newSignal;
+    if (_currentSignal == _signalStop)
     {
       _motor.writeMicroseconds(1500);
     }
     else
     {
-      _motor.write(_motorCurrentSignal);
+      _motor.write(_currentSignal);
     }
   }
 }
 
 void Motor::updatePower(BLEDevice central, BLECharacteristic characteristic)
 {
-  //characteristic.readValue(This->_motorPower);
-  //This->update();
+  Motor* This = motorRefs[0];
+  characteristic.readValue(This->_currentPower);
+  This->update();
 }
 
 void Motor::updateCalibration(BLEDevice central, BLECharacteristic characteristic)
 {
-  //characteristic.readValue(This->_motorCalibration);
-  //This->update();
+  Motor* This = motorRefs[0];
+  characteristic.readValue(This->_currentCalibration);
+  This->update();
 }

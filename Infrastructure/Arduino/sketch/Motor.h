@@ -1,30 +1,29 @@
 #pragma once
-
 #include <Servo.h>
 #include "BLEServiceRunner.h"
 
 class Motor {
 public:
   Motor(uint8_t component, int pin, BLEServiceRunner& ble);
-
   void begin();
 
 private:
-  const int _pin;
-  Servo _motor;
-
-  const int8_t _motorPowerMin = -127;
-  const int8_t _motorPowerStop = 0;
-  const int8_t _motorPowerMax = 127;
-  const int _motorSignalMin = 0;
-  const int _motorSignalStop = 90;
-  const int _motorSignalMax = 180;
-  int8_t _motorPower = 0;
-  uint8_t _motorCalibration = _motorPowerMax / 4;
-  int _motorCurrentSignal = _motorSignalStop;
+  const int8_t _powerMin = -127;
+  const int8_t _powerStop = 0;
+  const int8_t _powerMax = 127;
+  int8_t _currentPower;
+  uint8_t _currentCalibration;
+  
   BLECharacteristic _powerControlChar;
   BLECharacteristic _powerFeedbackChar;
   BLECharacteristic _calibrationChar;
+  
+  const int _pin;
+  const int _signalMin = 0;
+  const int _signalStop = 90;
+  const int _signalMax = 180;
+  int _currentSignal;
+  Servo _motor;
 
   void update();
 
