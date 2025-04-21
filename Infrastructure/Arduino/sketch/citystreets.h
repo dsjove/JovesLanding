@@ -1,4 +1,3 @@
-#define BLEFacilityID "4369-7479-2053-747265657473"
 #define BLELocalName "City Streets"
 
 #define HAS_MATRIX

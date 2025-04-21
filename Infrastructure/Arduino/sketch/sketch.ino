@@ -11,15 +11,16 @@ struct LightOutput {
 #include <Arduino_LED_Matrix.h>
 #endif
 #ifdef SERVO_PIN
-#include <Servo.h>
+#include "Motor.h"
 #endif
-#ifdef BLEFacilityID
+#ifdef BLELocalName
 #include "BLEServiceRunner.h"
 #endif
 
 Scheduler _runner;
-#ifdef BLEFacilityID
-BLEServiceRunner _ble(BLEFacilityID);
+#ifdef BLELocalName
+BLEServiceRunner _ble(BLELocalName);
+Motor m(2, 0, _ble);
 #endif
 
 void setup() {
@@ -33,7 +34,7 @@ void setup() {
 #ifdef HAS_LIGHTING
   lighting_begin();
 #endif
-#ifdef BLEFacilityID
+#ifdef BLELocalName
   _ble.begin(_runner);
 #else
   Serial.println("NO BLE Enabled");
@@ -66,7 +67,7 @@ uint32_t _matrixCurrent[3] = {
       0x100a0841
   };
 
-#ifdef BLEFacilityID
+#ifdef BLELocalName
 BLECharacteristic _matrixDisplayChar = _ble.characteristic("07020000", &_matrixCurrent, matrix_updateDisplay);
 #endif
 
@@ -75,7 +76,7 @@ void matrix_begin() {
   _matrix.loadFrame(_matrixCurrent);
 }
 
-#ifdef BLEFacilityID
+#ifdef BLELocalName
 void matrix_updateDisplay(BLEDevice device, BLECharacteristic characteristic) {
   uint32_t value[3];
   characteristic.readValue(value, sizeof(value));
@@ -106,7 +107,7 @@ uint8_t _motorCalibration = _motorPowerMax / 4;
 int _motorCurrentSignal = _motorSignalStop;
 //const int _epromIdxServoCalibration = 1;
 
-#ifdef BLEFacilityID
+#ifdef BLELocalName
 BLECharacteristic _motorPowerControlChar = _ble.characteristic("02020001", (uint8_t*)NULL, motor_updatePower);
 BLECharacteristic _motorPowerFeedbackChar = _ble.characteristic("02020002", &_motorPower);
 BLECharacteristic _motorCalibrationChar = _ble.characteristic("02010000", &_motorCalibration, motor_updateCalibration);
@@ -124,7 +125,7 @@ void motor_begin() {
   //}
 }
 
-#ifdef BLEFacilityID
+#ifdef BLELocalName
 void motor_updatePower(BLEDevice central, BLECharacteristic characteristic) {
   characteristic.readValue(_motorPower);
   motor_update();
@@ -142,7 +143,7 @@ void motor_update() {
   int newSignal = map(actualPower, _motorPowerMin, _motorPowerMax, _motorSignalMin, _motorSignalMax);
 
   if (newSignal != _motorCurrentSignal) {
-#ifdef BLEFacilityID
+#ifdef BLELocalName
     _motorPowerFeedbackChar.writeValue(actualPower);
 #endif
     _motorCurrentSignal = newSignal;
@@ -170,7 +171,7 @@ uint8_t _lightCalibration = 255;
 uint8_t _lightSensed = 0;
 uint8_t _lightCurrentSignal = 0;
 
-#ifdef BLEFacilityID
+#ifdef BLELocalName
 BLECharacteristic _lightPowerControlChar = _ble.characteristic("03020001", (uint8_t*)NULL, lighting_updatePower);
 BLECharacteristic _lightPowerFeedbackChar = _ble.characteristic("03020002", &_lightPower);
 BLECharacteristic _lightCalibrationChar = _ble.characteristic("03010000", &_lightCalibration, lighting_updateCalibration);
@@ -204,7 +205,7 @@ void lighting_begin() {
 #endif
 }
 
-#ifdef BLEFacilityID
+#ifdef BLELocalName
 void lighting_updatePower(BLEDevice central, BLECharacteristic characteristic) {
   characteristic.readValue(_lightPower);
   lighting_update();
@@ -223,14 +224,14 @@ void lighting_sense() {
   uint8_t signal = map(sensorValue, 920, 1014, 0, 255);
   if (signal != _lightSensed) {
     _lightSensed = signal;
-#ifdef BLEFacilityID
+#ifdef BLELocalName
     _lightSensedFeedbackChar.writeValue(_lightSensed);
 #endif
     lighting_update();
   }
 }
 #else
-#ifdef BLEFacilityID
+#ifdef BLELocalName
 void lighting_updateSensed(BLEDevice central, BLECharacteristic characteristic) {
   characteristic.readValue(_lightSensed);
   lighting_update();
@@ -252,7 +253,7 @@ void lighting_update() {
   }
 
   if (signal != _lightCurrentSignal) {
-  #ifdef BLEFacilityID
+  #ifdef BLELocalName
     _lightPowerFeedbackChar.writeValue(signal);
   #endif
     _lightCurrentSignal = signal;
