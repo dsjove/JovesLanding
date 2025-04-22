@@ -1,31 +1,35 @@
 #pragma once
+#include <string>
 #include <ArduinoBLE.h>
 #include <TaskScheduler.h>
 
 class BLEServiceRunner {
 public:
-  BLEServiceRunner(const char name[30], const char serviceID[28] = NULL);
+  //serviceID must be in the format of "0000-0000-0000-000000000000" or empty to use first 12 bytes of name
+  BLEServiceRunner(const std::string& name, const std::string& serviceID = "");
 
+  //only first 8 bytes used
   template <typename T>
-  BLECharacteristic characteristic(const char id[9], const T* value, BLECharacteristicEventHandler eventHandler = NULL)
+  BLECharacteristic characteristic(const std::string& id, const T* value, BLECharacteristicEventHandler eventHandler = NULL)
   {
     return characteristic(id, sizeof(T), value, eventHandler);
   }
 
+  //only first 8 bytes used
   template <typename T, std::size_t N>
-  BLECharacteristic characteristic(const char id[9], const std::array<T, N>* value, BLECharacteristicEventHandler eventHandler = NULL)
+  BLECharacteristic characteristic(const std::string& id, const std::array<T, N>* value, BLECharacteristicEventHandler eventHandler = NULL)
   {
     return characteristic(id, sizeof(const std::array<T, N>), value && N > 0 ? value->data() : NULL, eventHandler);
   }
 
-  BLECharacteristic characteristic(const char id[9], size_t size, const void* value, BLECharacteristicEventHandler eventHandler);
+  //only first 8 bytes used
+  BLECharacteristic characteristic(const std::string& id, size_t size, const void* value, BLECharacteristicEventHandler eventHandler);
 
   void begin(Scheduler& scheduler);
 
 private:
-  const bool _b;
-  char _name[13];
-  char _id[37];
+  const std::string _name;
+  const std::string _id;
   BLEService _bleService;
   Task _bluetoothTask;
 

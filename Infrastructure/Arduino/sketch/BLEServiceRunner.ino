@@ -1,50 +1,43 @@
 #include "BLEServiceRunner.h"
 #include <TaskScheduler.h>
 
-bool generatid(const char name[13], const char serviceID[28], char _id[37])
+std::string generateID(const std::string& name, const std::string& serviceID)
 {
-  ::memset(_id, '0', 8);
-  _id[8] = '-';
+  std::string result;
+  result.reserve(37);
+  result.append(8, '0');
+  result.push_back('-');
 
-  if (serviceID != NULL) 
+  if (!serviceID.empty()) 
   {
-    ::memcpy(_id + 9, serviceID, 28);
+    result.append(serviceID);
   }
   else
   {
-    const char* input = name;
-    char* output = _id + 9;
-    _id[36] = 0;
-
-    for (int i = 0; i < 12; i++)
+    int i = 0;
+    for (; i < 12 && i < name.length(); i++)
     {
-      if (!(*input))
-      {
-        *output = '0';
-        *(output + 1) = '0';
-        output += 2;
-      }
-      else
-      {
-        sprintf(output, "%02X", *input);
-        output += 2;
-        input++;
-      }
+      char output[3];
+      sprintf(output, "%02X", name[i]);
+      result.append(output);
       if (i == 1 || i == 3 || i == 5)
       {
-        *output = '-';
-        output++;
+        result.push_back('-');
       }
     }
+    if (i < 12) {
+      result.append((12 - i) * 2, '0');
+    }
   }
+  return result;
 }
 
-BLEServiceRunner::BLEServiceRunner(const char name[30], const char serviceID[28])
-: _b(generatid(name, serviceID, _id))
-, _bleService(_id)
+BLEServiceRunner::BLEServiceRunner(const std::string& name, const std::string& serviceID)
+: _name(name)
+, _id(generateID(name, serviceID))
+, _bleService(_id.c_str())
 , _bluetoothTask(100, TASK_FOREVER, &bluetooth_task)
 {
-    ::strncpy(_name, name, sizeof(_name));
 }
 
 void BLEServiceRunner::begin(Scheduler& scheduler)
@@ -54,7 +47,7 @@ void BLEServiceRunner::begin(Scheduler& scheduler)
     Serial.println("Starting Bluetooth® Low Energy module failed!");
     while (1);
   }
-  BLE.setLocalName(_name);
+  BLE.setLocalName(_name.c_str());
   BLE.setEventHandler(BLEConnected, bluetooth_connected);
   BLE.setEventHandler(BLEDisconnected, bluetooth_disconnected);
   
@@ -65,8 +58,8 @@ void BLEServiceRunner::begin(Scheduler& scheduler)
   if (r == 1) 
   {
     Serial.println("Bluetooth® device active, waiting for connections...");
-    Serial.println(_name);
-    Serial.println(_id);
+    Serial.println(_name.c_str());
+    Serial.println(_id.c_str());
   }
   else 
   {
@@ -82,11 +75,10 @@ void BLEServiceRunner::bluetooth_task()
   BLE.poll();
 }
 
-BLECharacteristic BLEServiceRunner::characteristic(const char id[9], size_t size, const void* value, BLECharacteristicEventHandler eventHandler)
+BLECharacteristic BLEServiceRunner::characteristic(const std::string& id, size_t size, const void* value, BLECharacteristicEventHandler eventHandler)
 {
- char fullID[37];
-  ::memcpy(fullID, id, 8);
-  ::memcpy(fullID + 8, _id + 8, 29);
+  std::string fullID(id.substr(0, 8));
+  fullID.append(_id.substr(9));
 
   uint16_t permissions = 0;
   if (value)
@@ -98,7 +90,7 @@ BLECharacteristic BLEServiceRunner::characteristic(const char id[9], size_t size
   {
     permissions |= BLEWriteWithoutResponse;
   }
-  BLECharacteristic characteristic(fullID, permissions, size);
+  BLECharacteristic characteristic(fullID.c_str(), permissions, size);
   if (value) 
   {
     characteristic.writeValue(value, size);
