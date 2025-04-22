@@ -2,9 +2,9 @@
 #include <Servo.h>
 #include "BLEServiceRunner.h"
 
-class Motor {
+class ServoMotor {
 public:
-  Motor(uint8_t component, int pin, BLEServiceRunner& ble);
+  ServoMotor(int pin, BLEServiceRunner& ble);
   void begin();
 
 private:

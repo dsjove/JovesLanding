@@ -2,13 +2,14 @@
 
 #include <TaskScheduler.h>
 //#include <EEPROM.h>
+
 #include "BLEServiceRunner.h"
 
 #ifdef HAS_MATRIX
 #include "MatrixR4.h"
 #endif
 #ifdef HAS_MOTOR
-#include "Motor.h"
+#include "ServoMotor.h"
 #endif
 #ifdef HAS_LIGHTING
 #include "Lighting.h"
@@ -21,7 +22,7 @@ MatrixR4 matrixR4(_ble);
 #endif
 
 #ifdef HAS_MOTOR
-Motor motor(2, SERVO_PIN, _ble);
+ServoMotor motor(SERVO_PIN, _ble);
 #endif
 
 #ifdef HAS_LIGHTING

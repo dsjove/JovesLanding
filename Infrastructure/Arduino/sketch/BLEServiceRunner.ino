@@ -82,7 +82,7 @@ void BLEServiceRunner::bluetooth_task()
   BLE.poll();
 }
 
-BLECharacteristic BLEServiceRunner::characteristic(const char id[9], size_t size, void* value, BLECharacteristicEventHandler eventHandler)
+BLECharacteristic BLEServiceRunner::characteristic(const char id[9], size_t size, const void* value, BLECharacteristicEventHandler eventHandler)
 {
  char fullID[37];
   ::memcpy(fullID, id, 8);
