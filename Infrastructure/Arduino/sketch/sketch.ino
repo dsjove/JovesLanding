@@ -50,11 +50,6 @@ void setup()
   _ble.begin(_runner);
 }
 
-void loop()
-{
-  _runner.execute();
-}
-
 //const int _epromIdxFirstRun = 0;
 //bool _firstRun = true;
 
@@ -68,4 +63,9 @@ void system_begin()
     //Serial.println("First Run!");
     //EEPROM.write(_epromIdxFirstRun, 1);
   //}
+}
+
+void loop()
+{
+  _runner.execute();
 }

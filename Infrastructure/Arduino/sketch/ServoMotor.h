@@ -5,6 +5,7 @@
 class ServoMotor {
 public:
   ServoMotor(int pin, BLEServiceRunner& ble);
+
   void begin();
 
 private:
@@ -17,6 +18,8 @@ private:
   BLECharacteristic _powerControlChar;
   BLECharacteristic _powerFeedbackChar;
   BLECharacteristic _calibrationChar;
+  static void updatePower(BLEDevice central, BLECharacteristic characteristic);
+  static void updateCalibration(BLEDevice central, BLECharacteristic characteristic);
   
   const int _pin;
   const int _signalMin = 0;
@@ -26,8 +29,4 @@ private:
   Servo _motor;
 
   void update();
-
-  static void updatePower(BLEDevice central, BLECharacteristic characteristic);
-
-  static void updateCalibration(BLEDevice central, BLECharacteristic characteristic);
 };

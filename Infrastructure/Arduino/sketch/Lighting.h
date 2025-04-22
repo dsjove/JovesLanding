@@ -25,12 +25,12 @@ private:
   BLECharacteristic _powerFeedbackChar;
   BLECharacteristic _calibrationChar;
   BLECharacteristic _sensedFeedbackChar;
-
-  Task _lightingTask;
-
   static void updatePower(BLEDevice central, BLECharacteristic characteristic);
   static void updateCalibration(BLEDevice central, BLECharacteristic characteristic);
-  static void senseAmbient_task();
   static void updateSensed(BLEDevice central, BLECharacteristic characteristic);
+
+  Task _lightingTask;
+  static void senseAmbient_task();
+  
   void update();
 };

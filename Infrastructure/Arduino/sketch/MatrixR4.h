@@ -13,10 +13,11 @@ private:
       0x44042081,
       0x100a0841
   };
-  BLECharacteristic _displayChar;
-  ArduinoLEDMatrix _matrix;
 
+  BLECharacteristic _displayChar;
   static void updateDisplay(BLEDevice device, BLECharacteristic characteristic);
+
+  ArduinoLEDMatrix _matrix;
 
   void set(const uint32_t request[3]);
 };
