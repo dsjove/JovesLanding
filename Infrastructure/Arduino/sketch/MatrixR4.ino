@@ -3,7 +3,8 @@
 static MatrixR4* matrixRefR4 = NULL;
 
 MatrixR4::MatrixR4(BLEServiceRunner& ble)
-: _displayChar(ble.characteristic("07020000", &_current, updateDisplay))
+: _current({0xB194a444, 0x44042081, 0x100a0841})
+, _displayChar(ble.characteristic("07020000", &_current, updateDisplay))
 {
   matrixRefR4 = this;
 }
@@ -11,21 +12,21 @@ MatrixR4::MatrixR4(BLEServiceRunner& ble)
 void MatrixR4::begin()
 {
   _matrix.begin();
-  _matrix.loadFrame(_current);
+  _matrix.loadFrame(_current.data());
 }
 
 void MatrixR4::updateDisplay(BLEDevice device, BLECharacteristic characteristic)
 {
-  uint32_t value[3];
-  characteristic.readValue(value, sizeof(value));
+  std::array<uint32_t, 3> value;
+  characteristic.readValue(value.data(), sizeof(value));
   matrixRefR4->set(value);
 }
 
-void MatrixR4::set(const uint32_t request[3])
+void MatrixR4::set(const std::array<uint32_t, 3>& data)
 {
-  if (memcmp(request, _current, sizeof(_current)) != 0)
+  if (data != _current)
   {
-    memcpy(_current, request, sizeof(_current));
-    _matrix.loadFrame(_current);
+    _current = data;
+    _matrix.loadFrame(_current.data());
   }
 }

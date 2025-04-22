@@ -12,6 +12,12 @@ public:
     return characteristic(id, sizeof(T), value, eventHandler);
   }
 
+  template <typename T, std::size_t N>
+  BLECharacteristic characteristic(const char id[9], const std::array<T, N>* value, BLECharacteristicEventHandler eventHandler = NULL)
+  {
+    return characteristic(id, sizeof(const std::array<T, N>), value && N > 0 ? value->data() : NULL, eventHandler);
+  }
+
   BLECharacteristic characteristic(const char id[9], size_t size, const void* value, BLECharacteristicEventHandler eventHandler);
 
   void begin(Scheduler& scheduler);
