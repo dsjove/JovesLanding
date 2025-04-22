@@ -1,11 +1,18 @@
 #pragma once
-#define BLELocalName "City Streets"
+#include "BLEServiceRunner.h"
+#include "MatrixR4.h"
+#include "ServoMotor.h"
+#include "Lighting.h"
 
-#define HAS_MATRIX
+class CityStreets {
+public:
+  CityStreets();
+  
+  void begin(Scheduler& scheduler);
 
-#define HAS_MOTOR
-#define SERVO_PIN 9
-
-#define HAS_LIGHTING
-#define LIGHT_OUTPUT {{3, true}, {0, false}}
-#define LIGHT_SENSOR_PIN A0
+private:
+  BLEServiceRunner _ble;
+  MatrixR4 _matrixR4;
+  Lighting _lighting;
+  ServoMotor _servoMotor;
+};

@@ -19,6 +19,20 @@ void ServoMotor::begin()
   _motor.attach(_pin);
 }
 
+void ServoMotor::updatePower(BLEDevice central, BLECharacteristic characteristic)
+{
+  ServoMotor* This = servoMotorRef;
+  characteristic.readValue(This->_currentPower);
+  This->update();
+}
+
+void ServoMotor::updateCalibration(BLEDevice central, BLECharacteristic characteristic)
+{
+  ServoMotor* This = servoMotorRef;
+  characteristic.readValue(This->_currentCalibration);
+  This->update();
+}
+
 void ServoMotor::update()
 {
   int8_t actualPower = (abs(_currentPower) < _currentCalibration) ? _powerStop : _currentPower;
@@ -37,18 +51,4 @@ void ServoMotor::update()
       _motor.write(_currentSignal);
     }
   }
-}
-
-void ServoMotor::updatePower(BLEDevice central, BLECharacteristic characteristic)
-{
-  ServoMotor* This = servoMotorRef;
-  characteristic.readValue(This->_currentPower);
-  This->update();
-}
-
-void ServoMotor::updateCalibration(BLEDevice central, BLECharacteristic characteristic)
-{
-  ServoMotor* This = servoMotorRef;
-  characteristic.readValue(This->_currentCalibration);
-  This->update();
 }

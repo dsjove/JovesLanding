@@ -37,13 +37,12 @@ void Lighting::updatePower(BLEDevice central, BLECharacteristic characteristic)
 void Lighting::updateCalibration(BLEDevice central, BLECharacteristic characteristic)
 {
   characteristic.readValue(lightingRef->_currentCalibration);
-  //EEPROM.write(_epromIdxLightingCalibration, _currentCalibration);
   lightingRef->update();
 }
 
 void Lighting::senseAmbient_task()
 {
-  int sensorValue = analogRead(LIGHT_SENSOR_PIN);
+  int sensorValue = analogRead(lightingRef->_sensor);
   uint8_t signal = map(sensorValue, 920, 1014, 0, 255);
   if (signal != lightingRef->_currentAmbient)
   {
