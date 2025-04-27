@@ -1,14 +1,25 @@
 #include <TaskScheduler.h>
-#include "CityStreets.h"
+
+#include "shared/BLEServiceRunner.cpp"
+#include "shared/MatrixR4.cpp"
+#include "shared/ServoMotor.cpp"
+#include "shared/Lighting.cpp"
 
 Scheduler _runner;
-CityStreets _cityStreets;
+BLEServiceRunner _ble("City Streets");
+MatrixR4 _matrixR4(_ble);
+Lighting _lighting({{3, true}, {0, false}}, A0, _ble);
+ServoMotor _servoMotor(9, _ble);
 
 void setup()
 {
   Serial.begin(9600);
   while (!Serial);
-  _cityStreets.begin(_runner);
+
+  _ble.begin(_runner);
+  _matrixR4.begin();
+  _lighting.begin(_runner);
+  _servoMotor.begin();
 }
 
 void loop()
