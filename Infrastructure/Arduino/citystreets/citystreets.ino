@@ -8,8 +8,8 @@
 Scheduler _runner;
 BLEServiceRunner _ble("City Streets");
 MatrixR4 _matrixR4(_ble);
-Lighting _lighting({{3, true}, {0, false}}, A0, _ble);
-ServoMotor _servoMotor(9, _ble);
+Lighting _lighting(_ble, {{3, true}, {0, false}}, A0);
+ServoMotor _servoMotor(_ble, 9);
 
 void setup()
 {

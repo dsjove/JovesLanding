@@ -3,9 +3,11 @@
 #include <ArduinoBLE.h>
 #include <TaskScheduler.h>
 
-class BLEServiceRunner {
+class BLEServiceRunner
+{
 public:
   //serviceID must be in the format of "0000-0000-0000-000000000000" or empty to use first 12 bytes of name
+  //The first 4 bytes (8 hexidecimal digits) are reserved.
   BLEServiceRunner(const std::string& name, const std::string& serviceID = "");
 
   //only first 8 bytes used

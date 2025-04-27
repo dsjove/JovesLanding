@@ -3,14 +3,16 @@
 #include <TaskScheduler.h>
 #include <vector>
 
-struct LightOutput {
+struct LightOutput
+{
 	int pin;
 	bool dimmable;
 };
 
-class Lighting {
+class Lighting
+{
 public:
-  Lighting(std::vector<LightOutput> output, int sensor, BLEServiceRunner& ble);
+  Lighting(BLEServiceRunner& ble, std::vector<LightOutput> output, int sensor = -1);
   void begin(Scheduler& scheduler);
 
 private:

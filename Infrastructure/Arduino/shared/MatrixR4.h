@@ -2,19 +2,22 @@
 #include <Arduino_LED_Matrix.h>
 #include "BLEServiceRunner.h"
 
-class MatrixR4 {
+class MatrixR4
+{
 public:
-  MatrixR4(BLEServiceRunner& ble);
-  
+  using Value = std::array<uint32_t, 3>;
+
+  MatrixR4(BLEServiceRunner& ble, const Value& value = {0xB194a444, 0x44042081, 0x100a0841});
+
   void begin();
 
 private:
-  std::array<uint32_t, 3> _current;
+  Value _current;
 
   BLECharacteristic _displayChar;
   static void updateDisplay(BLEDevice device, BLECharacteristic characteristic);
 
   ArduinoLEDMatrix _matrix;
 
-  void set(const std::array<uint32_t, 3>& data);
+  void set(const Value& data);
 };

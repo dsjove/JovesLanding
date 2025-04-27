@@ -25,7 +25,8 @@ std::string generateID(const std::string& name, const std::string& serviceID)
         result.push_back('-');
       }
     }
-    if (i < 12) {
+    if (i < 12)
+    {
       result.append((12 - i) * 2, '0');
     }
   }

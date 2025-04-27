@@ -2,7 +2,7 @@
 
 static Lighting* lightingRef = NULL;
 
-Lighting::Lighting(std::vector<LightOutput> output, int sensor, BLEServiceRunner& ble)
+Lighting::Lighting(BLEServiceRunner& ble, std::vector<LightOutput> output, int sensor)
 : _output(output)
 , _sensor(sensor)
 , _currentPower(0)
@@ -24,8 +24,11 @@ void Lighting::begin(Scheduler& scheduler)
   {  
     pinMode(light.pin, OUTPUT);
   }
-  scheduler.addTask(_lightingTask);
-  _lightingTask.enable();
+  if (_sensor != -1)
+  {
+    scheduler.addTask(_lightingTask);
+    _lightingTask.enable();
+   }
 }
 
 void Lighting::updatePower(BLEDevice central, BLECharacteristic characteristic)

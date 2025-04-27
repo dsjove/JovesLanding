@@ -2,7 +2,7 @@
 
 static ServoMotor* servoMotorRef = NULL;
 
-ServoMotor::ServoMotor(int pin, BLEServiceRunner& ble)
+ServoMotor::ServoMotor(BLEServiceRunner& ble, int pin)
 : _pin(pin)
 , _currentPower(0)
 , _currentCalibration(_powerMax / 4)

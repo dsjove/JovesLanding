@@ -2,9 +2,10 @@
 #include <Servo.h>
 #include "BLEServiceRunner.h"
 
-class ServoMotor {
+class ServoMotor
+{
 public:
-  ServoMotor(int pin, BLEServiceRunner& ble);
+  ServoMotor(BLEServiceRunner& ble, int pin);
 
   void begin();
 
