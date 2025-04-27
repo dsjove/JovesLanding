@@ -24,7 +24,7 @@ struct Indicator: ViewModifier {
 	func body(content: Content) -> some View {
 		ZStack {
 			Circle()
-				.fill(Color.sbjGauge("Gauge/Standard/Indicator"))
+				.fill(Color("GaugeIndicator"))
 				.aspectRatio(1, contentMode: .fit)
 			content
 				.aspectRatio(1, contentMode: .fit)
