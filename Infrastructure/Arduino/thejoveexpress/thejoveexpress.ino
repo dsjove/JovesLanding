@@ -2,6 +2,7 @@
 #include "esp_camera.h"
 //#include <WiFi.h>
 #include "shared/BLEServiceRunner.cpp"
+#include "Flash.h"
 
 //
 // WARNING!!! PSRAM IC required for UXGA resolution and high JPEG quality
@@ -45,15 +46,22 @@ BLEServiceRunner _ble("Jove Express");
 //const char *password = "**********";
 
 //void startCameraServer();
-void setupLedFlash(int pin);
 
-void setup() {
+void setup()
+{
   Serial.begin(115200);
   while (!Serial);
   Serial.setDebugOutput(true);
   Serial.println();
 
   _ble.begin(_runner);
+
+// Setup LED FLash if LED pin is defined in camera_pins.h
+#if defined(LED_GPIO_NUM)
+  Flash::setup(LED_GPIO_NUM);
+  Flash::setBrightness(8);
+  Flash::enable(true, true);
+#endif
 
   camera_config_t config;
   config.ledc_channel = LEDC_CHANNEL_0;
@@ -134,11 +142,6 @@ void setup() {
 
 #if defined(CAMERA_MODEL_ESP32S3_EYE)
   s->set_vflip(s, 1);
-#endif
-
-// Setup LED FLash if LED pin is defined in camera_pins.h
-#if defined(LED_GPIO_NUM)
-  setupLedFlash(LED_GPIO_NUM);
 #endif
 
   //WiFi.begin(ssid, password);

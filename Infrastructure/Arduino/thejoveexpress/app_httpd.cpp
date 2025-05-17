@@ -16,7 +16,6 @@
 #include "esp_camera.h"
 #include "img_converters.h"
 #include "fb_gfx.h"
-#include "esp32-hal-ledc.h"
 #include "sdkconfig.h"
 #include "camera_index.h"
 
@@ -24,19 +23,7 @@
 #include "esp32-hal-log.h"
 #endif
 
-// Enable LED FLASH setting
-#define CONFIG_LED_ILLUMINATOR_ENABLED 1
-
-// LED FLASH setup
-#if CONFIG_LED_ILLUMINATOR_ENABLED
-
-#define LED_LEDC_GPIO            22  //configure LED pin
-#define CONFIG_LED_MAX_INTENSITY 255
-
-int led_duty = 0;
-bool isStreaming = false;
-
-#endif
+#include "Flash.h"
 
 typedef struct {
   httpd_req_t *req;
@@ -88,19 +75,6 @@ static int ra_filter_run(ra_filter_t *filter, int value) {
     filter->count++;
   }
   return filter->sum / filter->count;
-}
-#endif
-
-#if CONFIG_LED_ILLUMINATOR_ENABLED
-void enable_led(bool en) {  // Turn LED On or Off
-  int duty = en ? led_duty : 0;
-  if (en && isStreaming && (led_duty > CONFIG_LED_MAX_INTENSITY)) {
-    duty = CONFIG_LED_MAX_INTENSITY;
-  }
-  ledcWrite(LED_LEDC_GPIO, duty);
-  //ledc_set_duty(CONFIG_LED_LEDC_SPEED_MODE, CONFIG_LED_LEDC_CHANNEL, duty);
-  //ledc_update_duty(CONFIG_LED_LEDC_SPEED_MODE, CONFIG_LED_LEDC_CHANNEL);
-  log_i("Set LED intensity to %d", duty);
 }
 #endif
 
@@ -162,14 +136,15 @@ static esp_err_t capture_handler(httpd_req_t *req) {
   int64_t fr_start = esp_timer_get_time();
 #endif
 
-#if CONFIG_LED_ILLUMINATOR_ENABLED
-  enable_led(true);
-  vTaskDelay(150 / portTICK_PERIOD_MS);  // The LED needs to be turned on ~150ms before the call to esp_camera_fb_get()
-  fb = esp_camera_fb_get();              // or it won't be visible in the frame. A better way to do this is needed.
-  enable_led(false);
-#else
-  fb = esp_camera_fb_get();
-#endif
+  if (Flash::hasFlash()) {
+    Flash::enable(true, false);
+    vTaskDelay(150 / portTICK_PERIOD_MS);  // The LED needs to be turned on ~150ms before the call to esp_camera_fb_get()
+    fb = esp_camera_fb_get();              // or it won't be visible in the frame. A better way to do this is needed.
+    Flash::enable(false, false);
+  }
+  else {
+    fb = esp_camera_fb_get();
+  }
 
   if (!fb) {
     log_e("Camera capture failed");
@@ -230,10 +205,7 @@ static esp_err_t stream_handler(httpd_req_t *req) {
   httpd_resp_set_hdr(req, "Access-Control-Allow-Origin", "*");
   httpd_resp_set_hdr(req, "X-Framerate", "60");
 
-#if CONFIG_LED_ILLUMINATOR_ENABLED
-  isStreaming = true;
-  enable_led(true);
-#endif
+  Flash::enable(true, true);
 
   while (true) {
     fb = esp_camera_fb_get();
@@ -293,10 +265,7 @@ static esp_err_t stream_handler(httpd_req_t *req) {
     );
   }
 
-#if CONFIG_LED_ILLUMINATOR_ENABLED
-  isStreaming = false;
-  enable_led(false);
-#endif
+  Flash::enable(false, true);
 
   return res;
 }
@@ -392,15 +361,9 @@ static esp_err_t cmd_handler(httpd_req_t *req) {
     res = s->set_wb_mode(s, val);
   } else if (!strcmp(variable, "ae_level")) {
     res = s->set_ae_level(s, val);
+  } else if (!strcmp(variable, "led_intensity")) {
+    Flash::setBrightness(val);
   }
-#if CONFIG_LED_ILLUMINATOR_ENABLED
-  else if (!strcmp(variable, "led_intensity")) {
-    led_duty = val;
-    if (isStreaming) {
-      enable_led(true);
-    }
-  }
-#endif
   else {
     log_i("Unknown command: %s", variable);
     res = -1;
@@ -480,11 +443,7 @@ static esp_err_t status_handler(httpd_req_t *req) {
   p += sprintf(p, "\"hmirror\":%u,", s->status.hmirror);
   p += sprintf(p, "\"dcw\":%u,", s->status.dcw);
   p += sprintf(p, "\"colorbar\":%u", s->status.colorbar);
-#if CONFIG_LED_ILLUMINATOR_ENABLED
-  p += sprintf(p, ",\"led_intensity\":%u", led_duty);
-#else
-  p += sprintf(p, ",\"led_intensity\":%d", -1);
-#endif
+  p += sprintf(p, ",\"led_intensity\":%u", Flash::getBrightness());
   *p++ = '}';
   *p++ = 0;
   httpd_resp_set_type(req, "application/json");
@@ -840,12 +799,4 @@ void startCameraServer() {
   if (httpd_start(&stream_httpd, &config) == ESP_OK) {
     httpd_register_uri_handler(stream_httpd, &stream_uri);
   }
-}
-
-void setupLedFlash(int pin) {
-#if CONFIG_LED_ILLUMINATOR_ENABLED
-  ledcAttach(pin, 5000, 8);
-#else
-  log_i("LED flash is disabled -> CONFIG_LED_ILLUMINATOR_ENABLED = 0");
-#endif
 }

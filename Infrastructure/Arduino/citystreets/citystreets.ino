@@ -7,7 +7,7 @@
 
 Scheduler _runner;
 BLEServiceRunner _ble("City Streets");
-MatrixR4 _matrixR4(_ble, {0x40286186, 0x1b6db6d4, 0x6239c000});
+MatrixR4 _matrixR4(_ble);
 Lighting _lighting(_ble, {{3, true}, {0, false}}, A0);
 ServoMotor _servoMotor(_ble, 9);
 
