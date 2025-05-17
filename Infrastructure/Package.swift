@@ -21,7 +21,8 @@ let package = Package(
     targets: [
         .target(
             name: "Infrastructure",
-            dependencies: ["BLEByJove"]),
+            dependencies: ["BLEByJove"],
+			exclude: ["OldTheJoveExpress"]),
         .testTarget(
             name: "InfrastructureTests",
             dependencies: ["Infrastructure"]),

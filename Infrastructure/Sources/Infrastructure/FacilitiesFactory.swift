@@ -24,8 +24,6 @@ public class FacilitiesFactory {
 				newFacilities = [JoveMetroLine(device: device)]
 			case CityStreets.Service:
 				newFacilities = [CityStreets(device: device)]
-			case TheJoveExpress.Service:
-				newFacilities = [TheJoveExpress(device: device)]
 			default:
 				newFacilities = [UnsupportedFacility(name: device.name)]
 		}

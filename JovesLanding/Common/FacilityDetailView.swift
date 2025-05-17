@@ -33,7 +33,7 @@ struct FacilityLineView: View {
 		case is UnsupportedFacility:
 			FacilityHeaderView(facility: facility as! UnsupportedFacility)
 		default:
-			FacilityHeaderView(facility: UnsupportedFacility(name: "Unsupported"))
+			FacilityHeaderView(facility: UnsupportedFacility(name: "Unknown"))
 		}
 	}
 }
@@ -52,7 +52,7 @@ struct FacilityDetailView: View {
 			case is UnsupportedFacility:
 				NotSupportedView(text: "Unsupported")
 			default:
-				NotSupportedView(text: "Unsupported")
+				NotSupportedView(text: "Unknown")
 			}
 		}
 		else {
