@@ -38,7 +38,7 @@ struct MotorizedFacilityGauageView<F: MotorizedFacility> : View {
 			control: motorPower.control,
 			idle: motorCalibration.feedback)
 		let indicators = self.indicators()
-		Power.PowerView(model) { _, w in
+		SbjGauge.Power.PowerView(model) { _, w in
 			GaugeIndicatorsView(width: w, indicators: indicators)
 		}
 	}

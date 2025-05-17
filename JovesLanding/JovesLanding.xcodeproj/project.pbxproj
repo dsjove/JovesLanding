@@ -19,7 +19,6 @@
 		55002C602D8F0FCC003B9952 /* BatteryIndicatorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55002C4E2D8F0FCC003B9952 /* BatteryIndicatorView.swift */; };
 		55002C612D8F0FCC003B9952 /* LightIndicatorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55002C512D8F0FCC003B9952 /* LightIndicatorView.swift */; };
 		55002C622D8F0FCC003B9952 /* MotorIndicatorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55002C522D8F0FCC003B9952 /* MotorIndicatorView.swift */; };
-		550F95052DA0503600C0A34B /* ArduinoDisplayControlView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 550F95042DA0503400C0A34B /* ArduinoDisplayControlView.swift */; };
 		550F95062DA0503600C0A34B /* ArduinoDisplayControlView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 550F95042DA0503400C0A34B /* ArduinoDisplayControlView.swift */; };
 		550F95072DA0503600C0A34B /* ArduinoDisplayControlView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 550F95042DA0503400C0A34B /* ArduinoDisplayControlView.swift */; };
 		55268B87294B7BF200BA9AC6 /* FacilitiesListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55268B86294B7BF200BA9AC6 /* FacilitiesListView.swift */; };
@@ -90,10 +89,8 @@
 		55D1A359294EB57A003381C3 /* GaugeIndicatorsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55D1A2DF294EB39F003381C3 /* GaugeIndicatorsView.swift */; };
 		55D1A360294EB616003381C3 /* JoveMetroLineView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55D1A35F294EB616003381C3 /* JoveMetroLineView.swift */; };
 		55E50AE029501CC500FC0773 /* JoveMetroLineView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55D1A35F294EB616003381C3 /* JoveMetroLineView.swift */; };
-		55E949712D933CDC00D79246 /* CityStreetsControlsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55E949702D933CDB00D79246 /* CityStreetsControlsView.swift */; };
 		55E949722D933CDC00D79246 /* CityStreetsControlsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55E949702D933CDB00D79246 /* CityStreetsControlsView.swift */; };
 		55E949732D933CDC00D79246 /* CityStreetsControlsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55E949702D933CDB00D79246 /* CityStreetsControlsView.swift */; };
-		55E9497D2D93400100D79246 /* JoveMetroLineControlsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55E9497C2D93400000D79246 /* JoveMetroLineControlsView.swift */; };
 		55E9497E2D93400100D79246 /* JoveMetroLineControlsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55E9497C2D93400000D79246 /* JoveMetroLineControlsView.swift */; };
 		55E9497F2D93400100D79246 /* JoveMetroLineControlsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55E9497C2D93400000D79246 /* JoveMetroLineControlsView.swift */; };
 		55F284202944452800047EF5 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 55F2841F2944452800047EF5 /* Assets.xcassets */; };
@@ -615,7 +612,6 @@
 				555C8AD32D8F044700EA33E0 /* MotorizedFacilityGauageView.swift in Sources */,
 				55A0DE8C2D9F08BA00FCA504 /* HVStack.swift in Sources */,
 				55D1A34D294EB564003381C3 /* FacilityDetailView.swift in Sources */,
-				55E949712D933CDC00D79246 /* CityStreetsControlsView.swift in Sources */,
 				559AB9E52DA08F8400666C1A /* ConductedView.swift in Sources */,
 				559E02422D9447CD00CA3953 /* MotorState.swift in Sources */,
 				55002C552D8F0FCC003B9952 /* ConnectionIndicatorView.swift in Sources */,
@@ -625,14 +621,12 @@
 				559E02492D94CA5300CA3953 /* LightsView.swift in Sources */,
 				559E024A2D94CA5300CA3953 /* HealthView.swift in Sources */,
 				559E024B2D94CA5300CA3953 /* EngineView.swift in Sources */,
-				550F95052DA0503600C0A34B /* ArduinoDisplayControlView.swift in Sources */,
 				559E024C2D94CA5300CA3953 /* CameraView.swift in Sources */,
 				55002C572D8F0FCC003B9952 /* LightIndicatorView.swift in Sources */,
 				55002C582D8F0FCC003B9952 /* MotorIndicatorView.swift in Sources */,
 				55D1A34C294EB55F003381C3 /* JovesLandingApp.swift in Sources */,
 				55D1A353294EB572003381C3 /* ViewDidLoadModifier.swift in Sources */,
 				55268B87294B7BF200BA9AC6 /* FacilitiesListView.swift in Sources */,
-				55E9497D2D93400100D79246 /* JoveMetroLineControlsView.swift in Sources */,
 				55D1A359294EB57A003381C3 /* GaugeIndicatorsView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
