@@ -30,6 +30,8 @@ struct FacilityLineView: View {
 			FacilityHeaderView(facility: facility as! JoveMetroLine)
 		case is CityStreets:
 			FacilityHeaderView(facility: facility as! CityStreets)
+		case is JoveExpress:
+			FacilityHeaderView(facility: facility as! JoveExpress)
 		case is UnsupportedFacility:
 			FacilityHeaderView(facility: facility as! UnsupportedFacility)
 		default:
@@ -49,6 +51,8 @@ struct FacilityDetailView: View {
 				JoveMetroLineView(facility: impl as! JoveMetroLine)
 			case is CityStreets:
 				CityStreetsView(facility: impl as! CityStreets)
+			case is JoveExpress:
+				JoveExpressView(facility: impl as! JoveExpress)
 			case is UnsupportedFacility:
 				NotSupportedView(text: "Unsupported")
 			default:

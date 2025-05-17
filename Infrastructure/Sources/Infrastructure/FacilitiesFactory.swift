@@ -24,6 +24,8 @@ public class FacilitiesFactory {
 				newFacilities = [JoveMetroLine(device: device)]
 			case CityStreets.Service:
 				newFacilities = [CityStreets(device: device)]
+			case JoveExpress.Service:
+				newFacilities = [JoveExpress(device: device)]
 			default:
 				newFacilities = [UnsupportedFacility(name: device.name)]
 		}
@@ -46,8 +48,7 @@ extension BTClient {
 		var base = [
 			CircuitCube.Service,
 			CityStreets.Service,
-		//	LegoPoweredUp.Service,
-		//	TheJoveExpress.Service,
+			JoveExpress.Service,
 		]
 		if (mocking) {
 			base.append(BTServiceIdentity(name: "Garbage"))

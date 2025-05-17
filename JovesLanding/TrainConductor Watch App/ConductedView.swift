@@ -11,6 +11,7 @@ import Infrastructure
 
 typealias JoveMetroLineView = ConductedView<JoveMetroLine>
 typealias CityStreetsView = ConductedView<CityStreets>
+typealias JoveExpressView = ConductedView<JoveExpress>
 
 struct ConductedView<F: MotorizedFacility>: View {
 	let facility: F
