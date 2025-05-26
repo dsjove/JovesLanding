@@ -121,14 +121,22 @@ esp_err_t res;
   return res;
 }
 
-typedef struct {
+struct jpg_chunking_t {
   httpd_req_t *req;
   size_t len;
-} jpg_chunking_t;
+};
 
 static size_t jpg_encode_stream(void *arg, size_t index, const void *data, size_t len) {
   jpg_chunking_t *j = (jpg_chunking_t *)arg;
-  if (!index) {
+  if (index == Camera::Frame::SinglIndex) {
+    if (httpd_resp_send(j->req, (const char *)data, len) == ESP_OK) {
+      j->len = len;
+      return len;
+    }
+    return 0;
+  }
+
+  if (index == 0) {
     j->len = 0;
   }
   if (httpd_resp_send_chunk(j->req, (const char *)data, len) != ESP_OK) {
@@ -143,7 +151,9 @@ static esp_err_t capture_handler(httpd_req_t *req) {
   int64_t fr_start = esp_timer_get_time();
 #endif
   esp_err_t res = ESP_OK;
+#if ARDUHAL_LOG_LEVEL >= ARDUHAL_LOG_LEVEL_INFO
   size_t buf_len = 0;
+#endif
 {
   Camera::Frame frame(CONFIG_LED_ILLUMINATOR_ENABLED);
 
@@ -156,23 +166,15 @@ static esp_err_t capture_handler(httpd_req_t *req) {
   httpd_resp_set_type(req, "image/jpeg");
   httpd_resp_set_hdr(req, "Content-Disposition", "inline; filename=capture.jpg");
   httpd_resp_set_hdr(req, "Access-Control-Allow-Origin", "*");
-
   char ts[32];
-  snprintf(ts, 32, "%lld.%06ld", frame.fb->timestamp.tv_sec, frame.fb->timestamp.tv_usec);
+  snprintf(ts, 32, "%lld.%06ld", frame.timestamp.tv_sec, frame.timestamp.tv_usec);
   httpd_resp_set_hdr(req, "X-Timestamp", (const char *)ts);
 
-  buf_len = frame.fb->len;
-  if (frame.fb->format == PIXFORMAT_JPEG) {
-    uint8_t *buf = frame.fb->buf;
-    res = httpd_resp_send(req, (const char *)buf, buf_len);
-  } else {
-    jpg_chunking_t jchunk = {req, 0};
-    res = frame2jpg_cb(frame.fb, 80, jpg_encode_stream, &jchunk) ? ESP_OK : ESP_FAIL;
-    httpd_resp_send_chunk(req, NULL, 0);
+  jpg_chunking_t jchunk = {req, 0};
+  res = frame.jpg(jpg_encode_stream, &jchunk, false, 80) ? ESP_OK : ESP_FAIL;
 #if ARDUHAL_LOG_LEVEL >= ARDUHAL_LOG_LEVEL_INFO
-    fb_len = jchunk.len;
+  buf_len = jchunk.len;
 #endif
-  }
 }
 #if ARDUHAL_LOG_LEVEL >= ARDUHAL_LOG_LEVEL_INFO
   int64_t fr_end = esp_timer_get_time();
@@ -209,8 +211,12 @@ static esp_err_t stream_handler(httpd_req_t *req) {
         log_e("Camera capture failed");
         res = ESP_FAIL;
       } else {
-        _timestamp.tv_sec = frame.fb->timestamp.tv_sec;
-        _timestamp.tv_usec = frame.fb->timestamp.tv_usec;
+        _timestamp.tv_sec = frame.timestamp.tv_sec;
+        _timestamp.tv_usec = frame.timestamp.tv_usec;
+        jpg_chunking_t jchunk = {req, 0};
+        res = frame.jpg(jpg_encode_stream, &jchunk, true, 80) ? ESP_OK : ESP_FAIL;
+        
+        res = frame.jpg(jpg_encode_stream, &jchunk, false) ? ESP_OK : ESP_FAIL;
         if (frame.fb->format != PIXFORMAT_JPEG) {
           converted = frame2jpg(frame.fb, 80, &_jpg_buf, &_jpg_buf_len);
           frame.consume();

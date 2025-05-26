@@ -108,6 +108,8 @@ bool ESP32Config::loadCache() {
     String line;
     while (file.available()) {
         line = file.readStringUntil('\n');
+        if (line.isEmpty()) continue;
+        if (line[0] == '#') continue;
         int delimiterIndex = line.indexOf('=');
         if (delimiterIndex != -1) {
             String name = line.substring(0, delimiterIndex);

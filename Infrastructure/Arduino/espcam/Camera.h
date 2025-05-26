@@ -34,10 +34,11 @@ public:
     inline void consume() {if (fb) { esp_camera_fb_return(fb); fb = NULL; } }
 
     static const size_t SinglIndex;
+    static const size_t End;
 
     bool jpg(
         jpg_out_cb iterate, void* capture, 
-        bool allAtOnce, int quality = 80, 
+        bool allAtOnce, int quality, 
         bool consumeFrame = true);
 
   private:

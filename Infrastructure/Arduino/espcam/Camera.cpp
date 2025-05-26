@@ -8,10 +8,10 @@
 #include <esp32-hal-psram.h>
 #include <cstring>
 
-#define setConfig(member, name, dft) config.member = preferences.getInt(name, dft)
-
 Camera::Camera() {
 }
+
+#define setConfig(member, name, dft) config.member = preferences.getInt(name, dft)
 
 bool Camera::begin(ESP32Config& preferences) {
   Flash::begin(LED_GPIO_NUM);
@@ -41,7 +41,7 @@ bool Camera::begin(ESP32Config& preferences) {
   //config.pixel_format = PIXFORMAT_RGB565; // for face detection/recognition
   config.grab_mode = CAMERA_GRAB_WHEN_EMPTY;
   config.fb_location = CAMERA_FB_IN_PSRAM;
-  config.jpeg_quality = 12;
+  config.jpeg_quality = 12; // 63...0
   config.fb_count = 1;
 
   // if PSRAM IC present, init with UXGA resolution and higher JPEG quality
@@ -270,7 +270,8 @@ void Camera::getValues(char json_response[1024]) {
   *p++ = 0;
 }
 
-const size_t Camera::Frame::SinglIndex = std::numeric_limits<size_t>::max();
+const size_t Camera::Frame::SinglIndex = std::numeric_limits<size_t>::max() - 1;
+const size_t Camera::Frame::End = std::numeric_limits<size_t>::max();
 
 bool Camera::Frame::jpg(
     jpg_out_cb iterate, void* capture, 
@@ -283,7 +284,6 @@ bool Camera::Frame::jpg(
     bool success = fb->buf && fb->len > 0;
     if (success) {
       success = iterate(capture, SinglIndex, fb->buf, fb->len) != 0;
-//httpd_resp_send(req, (const char *)fb->buf, fb->len) == ESP_OK
       if (consumeFrame) consume();
     }
     return success;
@@ -291,37 +291,18 @@ bool Camera::Frame::jpg(
   else if (allAtOnce) {
     uint8_t* buffer = NULL;
     size_t length = 0;
-//Why is streaming doing this one? To consume frame early?
     bool success = frame2jpg(fb, quality, &buffer, &length);
     if (consumeFrame) consume();
     if (success && buffer && length > 0) {
       success = iterate(capture, SinglIndex, buffer, length) != 0;
-//httpd_resp_send(req, (const char *)data, len) == ESP_OK
       free(buffer);
     }
     return success;
   }
   else {
     bool success = frame2jpg_cb(fb, quality, iterate, capture);
+    success |= iterate(capture, End, NULL, 0) != 0;
     if (consumeFrame) consume();
     return success;
-// typedef struct {
-//   httpd_req_t *req;
-//   size_t len;
-// } jpg_chunking_t;
-//jpg_chunking_t arg = {req, 0};
-// static size_t jpg_encode_stream(void *arg, size_t index, const void *data, size_t len) {
-//   jpg_chunking_t *j = (jpg_chunking_t *)arg;
-//   if (!index) { // start
-//     j->len = 0;
-//   }
-//   if (httpd_resp_send_chunk(j->req, (const char *)data, len) != ESP_OK) {
-//     return 0; //fail so return 0
-//   }
-//   j->len += len;
-//   return len; //return consumed len
-// }
-//httpd_resp_send_chunk(j->req, (const char *)data, len) != ESP_OK
-//httpd_resp_send_chunk(req, NULL, 0); //not streaming after the fact
   }
 }
