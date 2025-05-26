@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #define CONFIG_LED_ILLUMINATOR_ENABLED 1
-#define CONFIG_STREAMING_ENABLED 0
+#define CONFIG_STREAMING_ENABLED 1
 
 #include <esp_http_server.h>
 #include <esp_timer.h>
@@ -31,9 +31,9 @@
 #define PART_BOUNDARY "123456789000000000000987654321"
 
 #if CONFIG_STREAMING_ENABLED
-static const char *_STREAM_CONTENT_TYPE = "multipart/x-mixed-replace;boundary=" PART_BOUNDARY;
-static const char *_STREAM_BOUNDARY = "\r\n--" PART_BOUNDARY "\r\n";
-static const char *_STREAM_PART = "Content-Type: image/jpeg\r\nContent-Length: %u\r\nX-Timestamp: %d.%06d\r\n\r\n";
+static const char _STREAM_CONTENT_TYPE[] = "multipart/x-mixed-replace;boundary=" PART_BOUNDARY;
+static const char _STREAM_BOUNDARY[] = "\r\n--" PART_BOUNDARY "\r\n";
+static const char _STREAM_PART[] = "Content-Type: image/jpeg\r\nContent-Length: %u\r\nX-Timestamp: %d.%06d\r\n\r\n";
 httpd_handle_t stream_httpd = NULL;
 #endif
 
@@ -122,6 +122,8 @@ esp_err_t res;
 }
 
 struct jpg_chunking_t {
+  bool streamed;
+  timeval timestamp;
   httpd_req_t *req;
   size_t len;
 };
@@ -170,7 +172,7 @@ static esp_err_t capture_handler(httpd_req_t *req) {
   snprintf(ts, 32, "%lld.%06ld", frame.timestamp.tv_sec, frame.timestamp.tv_usec);
   httpd_resp_set_hdr(req, "X-Timestamp", (const char *)ts);
 
-  jpg_chunking_t jchunk = {req, 0};
+  jpg_chunking_t jchunk = {false, frame.timestamp, req, 0};
   res = frame.jpg(jpg_encode_stream, &jchunk, false, 80) ? ESP_OK : ESP_FAIL;
 #if ARDUHAL_LOG_LEVEL >= ARDUHAL_LOG_LEVEL_INFO
   buf_len = jchunk.len;
@@ -203,7 +205,6 @@ static esp_err_t stream_handler(httpd_req_t *req) {
   while (true) {
     size_t _jpg_buf_len = 0;
     {
-      struct timeval _timestamp;
       bool converted = false;
       uint8_t *_jpg_buf = NULL;
       Camera::Frame frame(false);
@@ -211,12 +212,6 @@ static esp_err_t stream_handler(httpd_req_t *req) {
         log_e("Camera capture failed");
         res = ESP_FAIL;
       } else {
-        _timestamp.tv_sec = frame.timestamp.tv_sec;
-        _timestamp.tv_usec = frame.timestamp.tv_usec;
-        jpg_chunking_t jchunk = {req, 0};
-        res = frame.jpg(jpg_encode_stream, &jchunk, true, 80) ? ESP_OK : ESP_FAIL;
-        
-        res = frame.jpg(jpg_encode_stream, &jchunk, false) ? ESP_OK : ESP_FAIL;
         if (frame.fb->format != PIXFORMAT_JPEG) {
           converted = frame2jpg(frame.fb, 80, &_jpg_buf, &_jpg_buf_len);
           frame.consume();
@@ -230,11 +225,11 @@ static esp_err_t stream_handler(httpd_req_t *req) {
         }
       }
       if (res == ESP_OK) {
-        res = httpd_resp_send_chunk(req, _STREAM_BOUNDARY, strlen(_STREAM_BOUNDARY));
+        res = httpd_resp_send_chunk(req, _STREAM_BOUNDARY, sizeof(_STREAM_BOUNDARY)-1);
       }
       if (res == ESP_OK) {
-        char *part_buf[128];
-        size_t hlen = snprintf((char *)part_buf, 128, _STREAM_PART, _jpg_buf_len, _timestamp.tv_sec, _timestamp.tv_usec);
+        char part_buf[128];
+        size_t hlen = snprintf(part_buf, sizeof(part_buf), _STREAM_PART, _jpg_buf_len, frame.timestamp.tv_sec, frame.timestamp.tv_usec);
         res = httpd_resp_send_chunk(req, (const char *)part_buf, hlen);
       }
       if (res == ESP_OK) {
