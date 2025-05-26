@@ -39,6 +39,7 @@ httpd_handle_t stream_httpd = NULL;
 
 httpd_handle_t camera_httpd = NULL;
 
+#if ARDUHAL_LOG_LEVEL >= ARDUHAL_LOG_LEVEL_INFO
 typedef struct {
   size_t size;   //number of values used for filtering
   size_t index;  //current value index
@@ -62,7 +63,6 @@ static ra_filter_t *ra_filter_init(ra_filter_t *filter, size_t sample_size) {
   return filter;
 }
 
-#if ARDUHAL_LOG_LEVEL >= ARDUHAL_LOG_LEVEL_INFO
 static int ra_filter_run(ra_filter_t *filter, int value) {
   if (!filter->values) {
     return value;
@@ -229,8 +229,8 @@ static esp_err_t stream_handler(httpd_req_t *req) {
       }
       if (res == ESP_OK) {
         char part_buf[128];
-        size_t hlen = snprintf(part_buf, sizeof(part_buf), _STREAM_PART, _jpg_buf_len, frame.timestamp.tv_sec, frame.timestamp.tv_usec);
-        res = httpd_resp_send_chunk(req, (const char *)part_buf, hlen);
+        size_t hlen = snprintf(part_buf, sizeof(part_buf), _STREAM_PART, _jpg_buf_len, (int)frame.timestamp.tv_sec, (int)frame.timestamp.tv_usec);
+        res = httpd_resp_send_chunk(req, part_buf, hlen);
       }
       if (res == ESP_OK) {
         res = httpd_resp_send_chunk(req, (const char *)_jpg_buf, _jpg_buf_len);
@@ -630,7 +630,9 @@ bool startCameraServer() {
 #endif
   };
 
+#if ARDUHAL_LOG_LEVEL >= ARDUHAL_LOG_LEVEL_INFO
   ra_filter_init(&ra_filter, 20);
+#endif
 
   log_i("Starting web server on port: '%d'", config.server_port);
   if (httpd_start(&camera_httpd, &config) == ESP_OK) {
