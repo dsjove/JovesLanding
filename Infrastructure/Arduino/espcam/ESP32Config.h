@@ -15,8 +15,10 @@ public:
     const char* namespaceName() const { return _namespace; }
 
     String getString(const char* key, const String& defaultValue = "");
+
     int getInt(const char* key, int defaultValue = 0);
-    inline bool getBool(const char* key, bool defaultValue = false) 
+
+    inline bool getBool(const char* key, bool defaultValue = false)
         {return getInt(key, defaultValue) != 0;}
 
 private:
@@ -36,7 +38,9 @@ public:
     ~ESP32ConfigWrite();
 
     void setString(const char* key, const String& value);
+
     void setInt(const char* key, int value);
+    
     inline void setBool(const char* key, int value)
         {setInt(key, value ? 1 : 0);}
 

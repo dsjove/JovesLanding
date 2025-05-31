@@ -1,14 +1,13 @@
-#include "env.h"
 #include "Camera.h"
 #include "CamServer.h"
 #include "Flash.h"
+#include "MySDCard.h"
 #include "ESP32Config.h"
 
 #include "shared/MyTime.cpp"
 #include "shared/MyWifi.cpp"
 
-#include <SD_MMC.h>
-
+MySDCard _sdCard;
 Camera _camera;
 MyWifi _wifi;
 CamServer _server;
@@ -18,23 +17,18 @@ bool begin() {
   while (!Serial);
   Serial.println();
 
-  Serial.print("SD Card: ");
-  if (SD_MMC.begin()) {
-    Serial.println("success");
+  if (_sdCard.begin()) {
   }
   else {
-    Serial.println("failed");
-    return false;
   }
 
   Serial.print("Configuration: ");
-  ESP32Config config("server", &SD_MMC);
+  ESP32Config config("server", _sdCard);
   if (config.begin()) {
     Serial.println("success");
   }
   else {
     Serial.println("failed");
-    return false;
   }
 
   Serial.print("Camera: ");
@@ -73,7 +67,7 @@ bool begin() {
   if (_server.begin(
       config.getString("name", "Christof").c_str(), 
       config.getString("service", "espcam").c_str())) {
-    Serial.printf("%s\n", _server.url().c_str());
+    Serial.printf("'%s' %s\n", _server.service().c_str(), _server.url().c_str());
   }
   else {
     return false;

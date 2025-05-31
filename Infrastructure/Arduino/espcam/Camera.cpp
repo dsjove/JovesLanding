@@ -270,7 +270,7 @@ void Camera::getValues(char json_response[1024]) {
   *p++ = 0;
 }
 
-const size_t Camera::Frame::SinglIndex = std::numeric_limits<size_t>::max() - 1;
+const size_t Camera::Frame::SingleIndex = std::numeric_limits<size_t>::max() - 1;
 const size_t Camera::Frame::End = std::numeric_limits<size_t>::max();
 
 bool Camera::Frame::jpg(
@@ -283,7 +283,7 @@ bool Camera::Frame::jpg(
   if (fb->format == PIXFORMAT_JPEG) {
     bool success = fb->buf && fb->len > 0;
     if (success) {
-      success = iterate(capture, SinglIndex, fb->buf, fb->len) != 0;
+      success = iterate(capture, SingleIndex, fb->buf, fb->len) != 0;
       if (consumeFrame) consume();
     }
     return success;
@@ -294,7 +294,7 @@ bool Camera::Frame::jpg(
     bool success = frame2jpg(fb, quality, &buffer, &length);
     if (consumeFrame) consume();
     if (success && buffer && length > 0) {
-      success = iterate(capture, SinglIndex, buffer, length) != 0;
+      success = iterate(capture, SingleIndex, buffer, length) != 0;
       free(buffer);
     }
     return success;

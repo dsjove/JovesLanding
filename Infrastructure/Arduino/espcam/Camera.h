@@ -33,7 +33,7 @@ public:
     inline operator bool () const { return fb != NULL; }
     inline void consume() {if (fb) { esp_camera_fb_return(fb); fb = NULL; } }
 
-    static const size_t SinglIndex;
+    static const size_t SingleIndex;
     static const size_t End;
 
     bool jpg(

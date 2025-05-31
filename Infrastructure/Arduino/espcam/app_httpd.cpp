@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #define CONFIG_LED_ILLUMINATOR_ENABLED 1
-#define CONFIG_STREAMING_ENABLED 1
+#define CONFIG_STREAMING_ENABLED 0
 
 #include <esp_http_server.h>
 #include <esp_timer.h>
@@ -123,21 +123,27 @@ esp_err_t res;
 
 struct jpg_chunking_t {
   bool streamed;
+  //FILE* file; FILE *file = fopen("/sdcard/image.jpg", "wb");
   timeval timestamp;
   httpd_req_t *req;
   size_t len;
+  //    //fclose(file);
 };
 
 static size_t jpg_encode_stream(void *arg, size_t index, const void *data, size_t len) {
+  /*
+  if (file) {
+        fwrite(data, len, 1, file);  // Append chunk to file
+    }
+  */
   jpg_chunking_t *j = (jpg_chunking_t *)arg;
-  if (index == Camera::Frame::SinglIndex) {
+  if (index == Camera::Frame::SingleIndex) {
     if (httpd_resp_send(j->req, (const char *)data, len) == ESP_OK) {
       j->len = len;
       return len;
     }
     return 0;
   }
-
   if (index == 0) {
     j->len = 0;
   }

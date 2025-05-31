@@ -111,13 +111,11 @@ bool ESP32Config::loadCache() {
         if (line.isEmpty()) continue;
         if (line[0] == '#') continue;
         int delimiterIndex = line.indexOf('=');
-        if (delimiterIndex != -1) {
-            String name = line.substring(0, delimiterIndex);
-            String value = line.substring(delimiterIndex + 1);
-            configCache[name] = value;
-        }
+        if (delimiterIndex == -1) continue;
+        String name = line.substring(0, delimiterIndex);
+        String value = line.substring(delimiterIndex + 1);
+        configCache[name] = value;
     }
-
     file.close();
     return true;
 }

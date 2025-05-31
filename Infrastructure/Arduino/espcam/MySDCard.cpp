@@ -1,45 +1,51 @@
-/*
 #include "MySDCard.h"
 #include "shared/MyTime.h"
-*/
+
+MySDCard::MySDCard()
+: _fs(NULL) {
+}
+
+bool MySDCard::begin() {
+  Serial.print("SD Card: ");
+
+  if (!SD_MMC.begin()) {
+    Serial.println("failed");
+    return false;
+  }
+
+  uint8_t cardType = SD_MMC.cardType();
+  if (cardType == CARD_NONE) {
+    Serial.println("no card");
+    return false;
+  }
+
+  _fs = &SD_MMC;
+
+  if (cardType == CARD_MMC) {
+      Serial.println("MMC");
+  } else if (cardType == CARD_SD) {
+      Serial.println("SDSC");
+  } else if (cardType == CARD_SDHC) {
+      Serial.println("SDHC");
+  } else {
+      Serial.println("UNKNOWN");
+  }
+
+  Serial.printf("Card Size: %lluMB\n", SD_MMC.cardSize() / (1024 * 1024));
+  Serial.printf("Total space: %lluMB\n", SD_MMC.totalBytes() / (1024 * 1024));
+  Serial.printf("Used space: %lluMB\n", SD_MMC.usedBytes() / (1024 * 1024));
+  Serial.println();
+  
+  return true;
+}
+
 /*
 https://www.youtube.com/watch?v=EuHxodrye6E
 https://www.youtube.com/redirect?event=video_description&redir_token=QUFFLUhqa0N1Njc3MlBuS012T0pVY0dmOV9Kd1lSMGtkQXxBQ3Jtc0trd1dkMTJKZ3lTUGFCaGl1eVRHVkFxbFhYaGxZRDc1SENRMTl5ZEFMN0tGUmVDaGpEY2o5bm1oRW04dDVNUGUyYWlqYTV4UEdSNE5TUU92Z1h5UEptTWkxV0E3dkdQeERQYW5ua3BLWUlZeTFwUEdYSQ&q=https%3A%2F%2Fthelastoutpostworkshop.github.io%2Fmicrocontroller_devkit%2Fesp32partitionbuilder%2F&v=EuHxodrye6E
 https://www.instructables.com/ESP32-CAM-Face-Recognition-With-MQTT-Support-AI-Th/
 */
-/*
-/ SD card init
-  if(!SD_MMC.begin()){
-       Serial.println("Card Mount Failed");
-       return;
-  }
-  uint8_t cardType = SD_MMC.cardType();
-
-  if(cardType == CARD_NONE){
-      Serial.println("No SD_MMC card attached");
-      return;
-  }
-
-   Serial.print("SD_MMC Card Type: ");
-   if(cardType == CARD_MMC){
-        Serial.println("MMC");
-    } else if(cardType == CARD_SD){
-        Serial.println("SDSC");
-    } else if(cardType == CARD_SDHC){
-        Serial.println("SDHC");
-    } else {
-        Serial.println("UNKNOWN");
-  }
-
-  uint64_t cardSize = SD_MMC.cardSize() / (1024 * 1024);
-  Serial.printf("SD_MMC Card Size: %lluMB\n", cardSize);
-  Serial.printf("Total space: %lluMB\n", SD_MMC.totalBytes() / (1024 * 1024));
-  Serial.printf("Used space: %lluMB\n", SD_MMC.usedBytes() / (1024 * 1024));
-  Serial.println();
-*/
 
 /*
-fs::FS &fs = SD_MMC;
     Serial.printf("Writing file: %s\n", path);
     File file = fs.open(path, FILE_WRITE);
     if (!file) {

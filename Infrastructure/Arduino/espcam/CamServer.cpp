@@ -8,6 +8,7 @@ CamServer::CamServer() {
 }
 
 bool CamServer::begin(const char* name, const char* service) {
+  _service = service;
   if (!MDNS.begin(name)) {
     return false;
   }
