@@ -31,13 +31,13 @@ void Lighting::begin(Scheduler& scheduler)
    }
 }
 
-void Lighting::updatePower(BLEDevice central, BLECharacteristic characteristic)
+void Lighting::updatePower(BLEDevice, BLECharacteristic characteristic)
 {
   characteristic.readValue(lightingRef->_currentPower);
   lightingRef->update();
 }
 
-void Lighting::updateCalibration(BLEDevice central, BLECharacteristic characteristic)
+void Lighting::updateCalibration(BLEDevice, BLECharacteristic characteristic)
 {
   characteristic.readValue(lightingRef->_currentCalibration);
   lightingRef->update();
@@ -55,16 +55,12 @@ void Lighting::senseAmbient_task()
   }
 }
 
-void Lighting::updateSensed(BLEDevice central, BLECharacteristic characteristic) {
+void Lighting::updateSensed(BLEDevice, BLECharacteristic characteristic) {
   characteristic.readValue(lightingRef->_currentAmbient);
   lightingRef->update();
 }
 
 void Lighting::update() {
-  const uint8_t powerMin = 0;
-  const uint8_t powerStop = 0;
-  const uint8_t powerMax = 255;
-
   uint8_t signal;
   if (_currentCalibration == 0 || _currentCalibration < _currentAmbient)
   {

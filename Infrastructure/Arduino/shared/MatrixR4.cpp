@@ -15,7 +15,7 @@ void MatrixR4::begin()
   _matrix.loadFrame(_current.data());
 }
 
-void MatrixR4::updateDisplay(BLEDevice device, BLECharacteristic characteristic)
+void MatrixR4::updateDisplay(BLEDevice, BLECharacteristic characteristic)
 {
   Value value;
   characteristic.readValue(value.data(), sizeof(value));

@@ -13,7 +13,7 @@ std::string generateID(const std::string& name, const std::string& serviceID)
   }
   else
   {
-    int i = 0;
+    size_t i = 0;
     for (; i < 12 && i < name.length(); i++)
     {
       char output[3];

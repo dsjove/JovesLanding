@@ -19,14 +19,14 @@ void ServoMotor::begin()
   _motor.attach(_pin);
 }
 
-void ServoMotor::updatePower(BLEDevice central, BLECharacteristic characteristic)
+void ServoMotor::updatePower(BLEDevice, BLECharacteristic characteristic)
 {
   ServoMotor* This = servoMotorRef;
   characteristic.readValue(This->_currentPower);
   This->update();
 }
 
-void ServoMotor::updateCalibration(BLEDevice central, BLECharacteristic characteristic)
+void ServoMotor::updateCalibration(BLEDevice, BLECharacteristic characteristic)
 {
   ServoMotor* This = servoMotorRef;
   characteristic.readValue(This->_currentCalibration);
